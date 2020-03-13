@@ -1,0 +1,8 @@
+SELECT DISTINCT ?stmt
+{
+    VALUES ?prop { p:P361 p:P527 p:P279 p:P921 }
+    ?p wdt:P31 wd:Q81408532.
+    ?q ?prop ?stmt.
+    ?stmt ?ps ?p.
+}
+

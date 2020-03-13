@@ -1,0 +1,7 @@
+SELECT DISTINCT ?p ?u ?t
+{
+    ?p wdt:P352 ?u.
+    OPTIONAL {
+      ?p wdt:P7260 ?t
+    }
+}
