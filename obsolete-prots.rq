@@ -1,0 +1,5 @@
+SELECT DISTINCT ?p ?u ?stmt
+{
+    ?p p:P352 ?stmt.
+    ?stmt ps:P352 ?u
+}

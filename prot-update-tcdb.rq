@@ -1,7 +1,11 @@
-SELECT DISTINCT ?p ?u ?t
+SELECT DISTINCT ?p ?u ?t ?stmt ?refdate
 {
     ?p wdt:P352 ?u.
     OPTIONAL {
-      ?p wdt:P7260 ?t
+      ?p p:P7260 ?stmt.
+      ?stmt ps:P7260 ?t.
+      OPTIONAL {
+        ?stmt (prov:wasDerivedFrom/pr:P813) ?refdate.
+      }
     }
 }
