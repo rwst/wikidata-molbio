@@ -1,0 +1,13 @@
+SELECT ?item ?refseq ?p31 ?stmt ?taxon WHERE {
+  ?item wdt:P637 ?refseq.
+  MINUS { ?item wdt:P31 wd:Q78782478 }
+  MINUS { ?item wdt:P352 [] }
+  OPTIONAL { 
+    ?item wdt:P703 ?taxon.
+  }
+  OPTIONAL { 
+    ?item p:P31 ?stmt.
+    ?stmt ps:P31 ?p31.
+    FILTER (?p31 = wd:Q66826848)
+  }
+}

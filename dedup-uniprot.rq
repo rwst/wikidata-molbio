@@ -1,0 +1,5 @@
+SELECT ?item ?uid WHERE    
+{
+  	?item wdt:P352 ?uid
+}
+
