@@ -1,0 +1,7 @@
+SELECT DISTINCT ?p ?stmt
+{
+    ?p p:P680|p:P681|p:P682 ?stmt.
+    ?stmt ps:P680|ps:P681|ps:P682 ?func.
+    ?func wdt:P31 wd:Q93740491.
+}
+

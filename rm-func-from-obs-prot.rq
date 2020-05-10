@@ -1,6 +1,8 @@
-SELECT DISTINCT ?p ?stmt ?func
-{
+SELECT DISTINCT ?p ?stmt
+{ 
     ?p wdt:P31 wd:Q66826848.
-    ?p p:P680 ?stmt.
-    ?stmt ps:P680 ?func.
+    ?p p:P680|p:P681|p:P682 ?stmt.
+    ?stmt prov:wasDerivedFrom ?ref.
+    ?ref pr:P248 wd:Q28018111.
 }
+
