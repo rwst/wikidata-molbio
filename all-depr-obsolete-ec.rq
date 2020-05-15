@@ -1,0 +1,7 @@
+SELECT DISTINCT ?p ?stmt ?ec ?rank
+{
+    ?p p:P591 ?stmt.
+    ?stmt ps:P591 ?ec.
+    ?stmt wikibase:rank ?rank.
+}
+
