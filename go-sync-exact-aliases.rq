@@ -1,0 +1,9 @@
+SELECT DISTINCT ?p ?go ?al
+{
+   { ?p wdt:P31 wd:Q14860489 } UNION {
+   ?p wdt:P31 wd:Q2996394 } UNION {
+   ?p wdt:P31 wd:Q5058355 } .
+   ?p wdt:P686 ?go.
+   ?p skos:altLabel ?al.
+   FILTER (LANG(?al) = 'en')
+}
