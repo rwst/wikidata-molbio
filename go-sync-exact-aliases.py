@@ -2,11 +2,8 @@
 import pronto, six, csv, os, json, argparse, sys, datetime
 
 """
-Find obsolete GO items (either "is_obsolete" or not existing) and:
-Remove "exact match" and deprecate "Gene Ontology ID" claims.
-In case the GO entry has "replaced_by" add "replaced by" (P1366)
-Change "instance of"-->"F/C/P obsoleted in GO"
-Remove any GO: alias
+Find aliases on GO items that are GO synonyms but not exact, and
+remove them. Also make sure the GO: id exists as alias.
 """
 
 # Initiate the parser

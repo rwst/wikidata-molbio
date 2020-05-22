@@ -1,0 +1,6 @@
+SELECT DISTINCT ?item ?go
+{
+   ?item wdt:P31 wd:Q14860489.
+   ?item wdt:P686 ?go
+}
+

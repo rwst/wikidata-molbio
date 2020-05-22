@@ -1,0 +1,7 @@
+SELECT DISTINCT ?item ?stmt ?ipr ?prop
+{ 
+  ?item p:P2926 ?stmt.
+  ?stmt ps:P2926 ?ipr.
+  OPTIONAL { ?item ?prop wd:Q81505329 }
+}
+

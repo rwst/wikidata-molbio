@@ -1,0 +1,10 @@
+SELECT DISTINCT ?item ?p ?goid ?mtype ?rank ?supc
+{ 
+    ?item p:P680 ?fstmt.
+    ?fstmt ps:P680 ?p.
+    ?p wdt:P686 ?goid.
+    ?fstmt pq:P4390 ?mtype.
+    ?fstmt wikibase:rank ?rank.
+    OPTIONAL { ?item wdt:P279 ?supc }
+}
+

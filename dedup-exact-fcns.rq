@@ -1,0 +1,8 @@
+SELECT DISTINCT ?item ?p ?rank
+{ 
+    ?item p:P680 ?fstmt.
+    ?fstmt ps:P680 ?p.
+    ?fstmt pq:P4390 wd:Q39893449.
+    ?fstmt wikibase:rank ?rank.
+}
+

@@ -1,0 +1,16 @@
+SELECT DISTINCT ?item ?itemLabel ?mtype ?rank ?go
+{ 
+  VALUES ?fams { wd:Q670158838 wd:Q417841 wd:Q78155096 wd:Q67101749 wd:Q81505329 wd:Q84467700 wd:Q83343207 wd:Q7251477 wd:Q68461428 wd:Q67141865 }
+  ?item wdt:P31 ?fams.
+  OPTIONAL {
+    ?item p:P680 ?fstmt.
+    ?fstmt ps:P680 ?p.
+    OPTIONAL {
+      ?fstmt pq:P4390 ?mtype.
+     }
+    ?fstmt wikibase:rank ?rank.
+    ?p wdt:P686 ?go
+   }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}
+
