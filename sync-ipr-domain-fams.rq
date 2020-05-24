@@ -1,0 +1,16 @@
+SELECT DISTINCT ?item ?ipr ?stmt ?adomit ?adomipr ?p31
+{ 
+  ?item wdt:P2926 ?ipr.
+  OPTIONAL {
+    ?item p:P31 ?stmt.
+    ?stmt ps:P31 wd:Q81505329.
+    ?stmt pq:P642 ?adomit.
+    OPTIONAL {
+        ?adomit wdt:P2926 ?adomipr
+    }
+  }
+  OPTIONAL {
+    ?item wdt:P31 ?p31
+  }
+}
+
