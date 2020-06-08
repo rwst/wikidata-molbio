@@ -1,0 +1,7 @@
+
+    SELECT DISTINCT ?item ?upid
+    {
+      ?item wdt:P703 wd:Q15978631.
+      ?item wdt:P352 ?upid
+    }
+    

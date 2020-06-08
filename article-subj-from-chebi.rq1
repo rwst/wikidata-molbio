@@ -1,0 +1,5 @@
+SELECT DISTINCT ?item ?chebi
+{ 
+  ?item wdt:P683 ?chebi
+}
+

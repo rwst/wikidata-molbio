@@ -1,5 +1,5 @@
 
-import pronto, six, csv, os, json, argparse, sys, datetime
+import pronto, six, csv, os, json, argparse, sys, datetime, time
 
 """
 Add missing descriptions
@@ -11,6 +11,7 @@ parser.add_argument("-s", "--output_qs", help="output to QS",
         action="store_true")
 parser.add_argument('-t', '--taxon', action='store')
 parser.add_argument('-k', '--kingdom', action='store')
+parser.add_argument('-l', '--lag', action='store')
 
 # Read arguments from the command line
 args = parser.parse_args()
@@ -19,14 +20,14 @@ args = parser.parse_args()
 script = os.path.basename(sys.argv[0])[:-3]
 QS = args.output_qs
 taxon = args.taxon
+lag = args.lag
 if len(taxon) == 0:
     raise
 kingdom = args.kingdom
 if len(kingdom) == 0:
     raise
 
-species = ['Q669922', 'Q62116300', 'Q62116449', 'Q2324689',
-        ]
+species = ['Q62115984']
 
 query = """
 SELECT DISTINCT ?item ?glabel ?desc
@@ -86,7 +87,9 @@ for d in jol:
     if QS:
         print('{}|Den|"{}"'.format(it, dstr))
     else:
+        print('wd sd {} en "{}"'.format(it, dstr))
         ret = os.popen('wd sd {} en "{}"'.format(it, dstr))
         print(ret.read())
         if ret.close() is not None:
             print('ERROR')
+        #time.sleep(int(lag))
