@@ -1,0 +1,19 @@
+SELECT DISTINCT ?item ?goid ?chid ?prop ?stmt ?obj ?ref ?srole ?orole
+{
+  { ?item wdt:P686 ?goid. } UNION { ?item wdt:P683 ?chid. }.
+  OPTIONAL {
+    ?item p:P361|p:P527 ?stmt.
+    ?item ?prop ?stmt.
+    ?stmt ps:P361|ps:P527 ?obj.
+    OPTIONAL {
+      ?stmt pq:P2868 ?srole.
+    }
+    OPTIONAL {
+      ?stmt pq:P3831 ?orole.
+    }
+    OPTIONAL {
+      ?stmt prov:wasDerivedFrom ?ref.
+    }
+  }
+}
+
