@@ -10,7 +10,6 @@ parser.add_argument("-s", "--output_qs", help="output to QS",
         action="store_true")
 parser.add_argument("-q", "--query", help="perform SPARQL query",
         action="store_true")
-parser.add_argument('-t', '--taxon', action='store', required=True)
 
 # Read arguments from the command line
 args = parser.parse_args()
@@ -18,22 +17,10 @@ args = parser.parse_args()
 # Check for --version or -V
 QS = args.output_qs
 dontquery = not args.query
-taxon = args.taxon
 script = os.path.basename(sys.argv[0])[:-3]
 
 if dontquery is False:
-    query = """
-    SELECT DISTINCT ?item ?upid
-    {{
-      ?item wdt:P703 wd:{}.
-      ?item wdt:P352 ?upid
-    }}
-    """.format(taxon)
-    f = open('{}.rq'.format(script), 'w')
-    f.write(query)
-    f.close()
-
-    print('performing query... on taxon {}'.format(taxon))
+    print('performing query')
     ret = os.popen('wd sparql {}.rq >{}.json'.format(script, script))
     if ret.close() is not None:
         raise
@@ -41,13 +28,13 @@ file = open('{}.json'.format(script))
 s = file.read()
 jol = json.loads(s)
 
-uids = {}
+goits = {}
 for d in jol:
     item = d.get('item')
-    upid = d.get('upid')
-    g = uids.get(upid)
+    goid = d.get('goid')
+    g = goits.get(goid)
     if g is None:
-        uids[upid] = item
+        goits[goid] = item
     else:
         print('CANT HAPPEN: {} {}'.format(item, g))
         raise
@@ -72,7 +59,7 @@ for line in file.readlines():
         p[0].append(qit)
         p[1].extend(subj)
 
-upids = {}
+goids = {}
 print('Reading GOA data')
 reader = csv.DictReader(open('goa-pmid.tsv', 'r'), delimiter='\t')
 for item in reader:
@@ -80,45 +67,42 @@ for item in reader:
     if not ref.startswith('PMID'):
         continue
     pmid = ref[5:]
-    upid = item.get('id')
-    if upid not in uids.keys():
-        continue
-    u = upids.get(pmid)
-    if u is None:
-        upids[pmid] = [upid]
+    goid = item.get('goid')
+    g = goids.get(goid)
+    if g is None:
+        goids[pmid] = [goid]
     else:
-        u.append(upid)
+        g.append(goid)
 
-for pmid in upids.keys():
+for pmid in goids.keys():
     p = pmids.get(pmid)
     if p is None:
         print('PMID {} is missing'.format(pmid))
         continue
-    upidarr = set(upids.get(pmid))
-    if len(upidarr) > 14:
-        continue
-    for upid in upidarr:
-        upit = uids.get(upid)
-        if upit is None:
-            print('UniProt:{} is missing'.format(upid))
+    goidarr = set(goids.get(pmid))
+#    if len(goidarr) > 14:
+#        continue
+    for goid in goidarr:
+        goit = goits.get(goid)
+        if goit is None:
             continue
         pmits,pmsbj = p
-        if upit in pmsbj:
+        if goit in pmsbj:
             continue
         if QS:
-            print('{}|P921|{}|S248|Q96105165'.format(min(pmits), upit))
+            print('{}|P921|{}|S248|Q96105165'.format(min(pmits), goit))
         else:
             j = {"id": min(pmits),
                 "claims": {
-                     "P921": { "value": upit,
+                     "P921": { "value": goit,
                          "references": { "P248": "Q96105165"} },
                         }
                     }
-            #f = open('t.json', 'w')
-            #f.write(json.dumps(j))
-            #f.close()
+            f = open('t.json', 'w')
+            f.write(json.dumps(j))
+            f.close()
             print(json.dumps(j), flush=True)
-            #ret = os.popen('wd ee t.json --summary article-usubj-from-goa')
-            #print(ret.read())
-            #if ret.close() is not None:
-            #    print('ERROR')
+            ret = os.popen('wd ee t.json --summary article-usubj-from-goa')
+            print(ret.read())
+            if ret.close() is not None:
+                print('ERROR')

@@ -1,0 +1,18 @@
+SELECT DISTINCT ?stmt 
+{
+  ?upid wdt:P31 wd:Q93740491.
+  {
+    ?item wdt:P680 ?upid.
+    ?item p:P680 ?stmt.
+    ?stmt ps:P680 ?upid
+  } UNION {
+    ?item wdt:P681 ?upid.
+    ?item p:P681 ?stmt.
+    ?stmt ps:P681 ?upid
+  } UNION {  
+    ?item wdt:P682 ?upid.
+    ?item p:P682 ?stmt.
+    ?stmt ps:P682 ?upid
+  }
+}
+

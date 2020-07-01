@@ -2,11 +2,16 @@
 import pronto, six, csv, os, json, argparse, sys, datetime
 
 """
+NOTE: DEPRECATION OF P686 NOT IMPLEMENTED. PROCEED MANUALLY.
+REMOVAL OF ALIASES NOT IMPLEMENTED.
+
 Find obsolete GO items (either "is_obsolete" or not existing) and:
 Remove "exact match" and deprecate "Gene Ontology ID" claims.
-In case the GO entry has "replaced_by" add "replaced by" (P1366)
 Change "instance of"-->"F/C/P obsoleted in GO"
 Remove any GO: alias
+Further processing (removing stmts, merging) should be done manually.
+Effectively, replaced entities should be merged, others should have
+all links removed that point to them (see rm-ann-to-obs-go.py)
 """
 
 # Initiate the parser
@@ -45,16 +50,18 @@ for d in jol:
         continue
     gostmt = d.get('gostmt')
     exm = d.get('exm')
-    if not exm.startswith('http://purl.obolibrary.org/obo/GO_'):
-        continue
-    exstmt = d.get('exstmt')
+    if exm is not None and exm.startswith('http://purl.obolibrary.org/obo/GO_'):
+        exstmt = d.get('exstmt')
+    else:
+        exstmt = None
     it = d.get('item')
     git = goids.get(goid)
     if git is None:
         goids[goid] = (it,gostmt,exm,exstmt)
         items.append(it)
     else:
-        print("CAN'T HAPPEN: {}".format(goid))
+        if exstmt is not None:
+            goids[goid] = (it,gostmt,exm,exstmt)
 
 print('reading GO')
 ont = pronto.Ontology('/home/ralf/go-ontology/src/ontology/go-edit.obo')
@@ -87,22 +94,16 @@ ndate = datetime.date.today().isoformat()
 newd = ndate + 'T00:00:00Z'
 for goid in obids:
     it,gostmt,exm,exstmt = goids.get(goid)
-    term = ont.get(goid)
-    repl_id = None
-    if term is not None and len(term.replaced_by) > 0:
-        repl_id = term.replaced_by.pop().id
     if QS:
         print('{}|P31|Q93740491|S248|Q93741199|S813|+{}/11'.format(it, newd))
-        print('-{}|P686|"{}"'.format(it, goid))
-        print('-{}|P2888|"{}"'.format(it, exm))
+        if exm is not None:
+            print('-{}|P2888|"{}"'.format(it, exm))
         aldir = als.get(it)
         if aldir is not None:
             for lang,allist in aldir.items():
                 for al in allist:
                     if al.startswith('GO:'):
                         print('-{}|A{}|"{}"'.format(it, lang, al))
-        if repl_id is not None:
-            print('{}|P1366|{}|S248|Q93741199|S813|+{}/11'.format(it, goids.get(repl_id)[0], newd))
     else:
         aldir = als.get(it)
         ald = {}
@@ -117,12 +118,13 @@ for goid in obids:
                                 "references": { "P248": "Q93741199",
                                     "P813": ndate }}],
                 "P686": [{"id":gostmt, "remove":True}],
-                "P2888": [{"id":exstmt, "remove":True}]
                 } }
         if repl_id is not None:
             j.get('claims')['P1366'] = { "value": goids.get(repl_id)[0],
                                     "references": { "P248": "Q93741199",
                                         "P813": ndate }}
+        if exstmt is not None:
+            j.get('claims')['P2888'] = [{"id":exstmt, "remove":True}]
         if len(ald) > 0:
             j['aliases'] = ald
         f = open('t.json', 'w')

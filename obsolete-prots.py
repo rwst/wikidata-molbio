@@ -6,9 +6,16 @@ Remove obsolete UniProt Id, add inst-of Q66826848 (ref. UniProt Id)
 Dependecy: List of proper UniProt IDs created from idmapping.tar.gz via the
 script zcat idmapping.dat.gz |sed 's/[\t\-].*$//g' |sort |uniq >uniprot-ids
 """
+parser = argparse.ArgumentParser()
+parser.add_argument("-s", "--output_qs", help="output to QS",
+        action="store_true")
+parser.add_argument("-q", "--query", help="perform SPARQL query",
+        action="store_true")
 
-QS = False
-dontquery = 1#False
+args = parser.parse_args()
+
+QS = args.output_qs
+dontquery = not args.query
 script = os.path.basename(argv[0])[:-3]
 ndate = '2020-04-30'
 newd = ndate + 'T00:00:00Z'
@@ -73,7 +80,7 @@ with open('{}.obsu'.format(script)) as file:
                 f.write(json.dumps(j))
                 f.close()
                 print(json.dumps(j), flush=True)
-                ret = os.popen('wd ee t.json')
+                ret = os.popen('wd ee t.json --summary obsolete-uniprot')
                 print(ret.read())
                 if ret.close() is not None:
                     print('ERROR')

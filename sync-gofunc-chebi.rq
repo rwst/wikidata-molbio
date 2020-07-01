@@ -1,0 +1,18 @@
+SELECT DISTINCT ?item ?goid ?chid ?stmt ?obj ?ref ?side
+{
+  { ?item wdt:P686 ?goid.
+    ?item wdt:P31 wd:Q14860489
+  } UNION { ?item wdt:P683 ?chid. }.
+  OPTIONAL {
+    ?item wdt:P686 ?goid.
+    ?item p:P527 ?stmt.
+    ?stmt ps:P527 ?obj.
+    OPTIONAL {
+      ?stmt pq:P361 ?side.
+    }
+    OPTIONAL {
+      ?stmt prov:wasDerivedFrom ?ref.
+    }
+  }
+}
+
