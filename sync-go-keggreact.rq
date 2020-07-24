@@ -1,0 +1,14 @@
+SELECT ?item ?goid ?kegg ?stmt ?refd WHERE {
+  ?item wdt:P686 ?goid.
+  OPTIONAL {
+    ?item p:P665 ?stmt.
+    ?stmt ps:P665 ?kegg
+    OPTIONAL {
+      ?stmt prov:wasDerivedFrom ?ref.
+      OPTIONAL {
+        ?ref pr:P248 ?refd
+      }
+    }
+  }
+}
+
