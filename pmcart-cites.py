@@ -33,7 +33,7 @@ if ii is None:
     raise
 jj = None
 refs = []
-for j in range(i-3, len(lynx)):
+for j in range(ii-3, len(lynx)):
     if lynx[j].find('twitter.com') != -1:
         jj = j
         break
