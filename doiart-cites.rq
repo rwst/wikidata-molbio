@@ -1,0 +1,10 @@
+SELECT ?item ?doi
+WHERE 
+{
+  VALUES ?topic { wd:Q908902 wd:Q7202 } 
+  ?item wdt:P31 wd:Q13442814.
+  ?item p:P921 [ ps:P921 ?topic; pq:P642 wd:Q82069695 ].
+  ?item wdt:P356 ?doi.
+  MINUS { ?item wdt:P2860 [] }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}
