@@ -1,0 +1,14 @@
+SELECT DISTINCT ?citem ?citemLabel
+WHERE 
+{
+  VALUES ?topic { wd:Q908902 wd:Q7202 } 
+  ?item wdt:P31 wd:Q13442814.
+  ?item p:P921 [ ps:P921 ?topic; pq:P642 wd:Q82069695 ].
+  ?item wdt:P2860 ?citem.
+  MINUS { 
+    VALUES ?topic2 { wd:Q908902 wd:Q7202 } 
+    ?citem p:P921 [ ps:P921 ?topic2; pq:P642 wd:Q82069695 ]
+  }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}
+

@@ -1,0 +1,8 @@
+SELECT ?stmt ?inchi
+WHERE 
+{
+  ?item p:P234 ?stmt.
+  ?stmt ps:P234 ?inchi.
+  FILTER(STRSTARTS(?inchi, '1S'))
+}
+LIMIT 50000
