@@ -1,0 +1,17 @@
+SELECT ?item ?key ?iref ?irank ?cstmt ?rel
+WHERE 
+{
+  ?item p:P235 ?stmt.
+  ?stmt ps:P235 ?key.
+  OPTIONAL {
+    ?stmt prov:wasDerivedFrom ?refnode.
+    OPTIONAL {
+      ?refnode pr:P248 ?iref.
+    }
+  }
+  ?stmt wikibase:rank ?irank.
+  ?item p:P683 ?cstmt.
+  OPTIONAL {
+    ?cstmt ps:P4390 ?rel
+  }
+}
