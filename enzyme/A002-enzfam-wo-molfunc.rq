@@ -1,0 +1,9 @@
+SELECT DISTINCT ?item ?label
+WHERE 
+{
+  ?item wdt:P31 wd:Q67015883.
+  MINUS { ?item wdt:P680 [] }
+  ?item rdfs:label ?label.
+  FILTER(LANG(?label) = 'en').
+}
+

@@ -1,0 +1,13 @@
+SELECT DISTINCT ?item ?func ?skos
+WHERE 
+{
+  ?item wdt:P31 wd:Q67015883.
+  MINUS { ?item wdt:P279 [] }
+  ?item p:P680 ?stmt2.
+  ?stmt2 ps:P680 ?func.
+  ?stmt2 pq:P4390 ?skos.
+  FILTER ( ?skos = wd:Q39894595 || ?skos = wd:Q39893449 ).
+  ?item rdfs:label ?label.
+  FILTER(LANG(?label) = 'en').
+}
+

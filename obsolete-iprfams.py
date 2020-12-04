@@ -3,6 +3,8 @@ import os, json, argparse, sys, datetime, time
 import xml.etree.ElementTree as ET, gzip
 
 """
+Loads all items with IPR except domain families and checks InterPro release for obsoletions.
+Checks also for duplicatze IPR.
 """
 # Initiate the parser
 parser = argparse.ArgumentParser()
@@ -22,6 +24,7 @@ lag = args.lag
 if lag is None:
     lag =0
 script = os.path.basename(sys.argv[0])[:-3]
+INTERPRO_RELEASE = 'Q102425430'
 
 if dontquery is False:
     print('performing query...')
@@ -64,18 +67,10 @@ for nipr in set(qits.keys()).difference(set(its.keys())):
              "claims": {
                  "P2926": { "id": stmt, "remove": True },
                  "P31": { "value": "Q81408532",
-                     "references": { "P248": "Q95046663",
+                     "references": { "P248": INTERPRO_RELEASE,
                          "P2926": nipr }
                      }
                 }
              }
-        f = open('t.json', 'w')
-        f.write(json.dumps(j))
-        f.close()
         print(json.dumps(j), flush=True)
-        ret = os.popen('wd ee t.json --summary fam-subc-from-isa')
-        print(ret.read())
-        if ret.close() is not None:
-            print('ERROR')
-        time.sleep(int(lag))
        
