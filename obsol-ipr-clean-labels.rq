@@ -1,0 +1,13 @@
+SELECT DISTINCT ?item ?alias (LANG(?alias) AS ?aliasLang) ?desc (LANG(?desc) AS ?descLang)  
+WHERE 
+{
+  ?item wdt:P31 wd:Q81408532.
+  {
+    ?item skos:altLabel ?alias.
+  }
+  UNION
+  {
+    ?item schema:description ?desc.
+  }
+}
+
