@@ -26,7 +26,8 @@ ndate = datetime.date.today().isoformat()
 newd = ndate + 'T00:00:00Z'
 
 famtypes = ['Q670158838', 'Q417841', 'Q78155096', 'Q67101749', 'Q81505329',
- 'Q84467700', 'Q83343207', 'Q7251477', 'Q68461428', 'Q67141865' ]
+ 'Q84467700', 'Q83343207', 'Q7251477', 'Q68461428', 'Q67141865',
+ 'GO:0008534']
 
 if dontquery is False:
     print('performing query...')
