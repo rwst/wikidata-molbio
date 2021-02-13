@@ -64,7 +64,7 @@ for goid in goids.keys():
     for syn in term.synonyms:
         if syn.scope != 'EXACT' and syn.description in als:
             newals.remove(syn.description)
-        if syn.scope == 'EXACT':
+        if syn.scope == 'EXACT' and len(syn.description) <= 250:
             newals.add(syn.description)
     if newals == set(als):
         continue
