@@ -1,8 +1,16 @@
 from sys import *
 import csv, os, json
 
-QS = False
-dontquery = False
+parser = argparse.ArgumentParser()
+parser.add_argument("-s", "--output_qs", help="output to QS",
+        action="store_true")
+parser.add_argument("-q", "--query", help="perform SPARQL query",
+        action="store_true")
+
+args = parser.parse_args()
+
+QS = args.output_qs
+dontquery = not args.query
 script = os.path.basename(argv[0])[:-3]
 ndate = '2020-04-29'
 newd = ndate + 'T00:00:00Z'
