@@ -5,9 +5,16 @@ import csv, os, json
 Merge items with duplicate UniProt Id, always newer into older.
 Note: items cannot have two different descriptions in any language.
 """
+parser = argparse.ArgumentParser()
+parser.add_argument("-s", "--output_qs", help="output to QS",
+        action="store_true")
+parser.add_argument("-q", "--query", help="perform SPARQL query",
+        action="store_true")
 
-QS = False
-dontquery = False
+args = parser.parse_args()
+
+QS = args.output_qs
+dontquery = not args.query
 script = os.path.basename(argv[0])[:-3]
 
 if dontquery is False:
