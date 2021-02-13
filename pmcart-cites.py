@@ -2,7 +2,7 @@
 import os, json, argparse, sys, datetime, time, csv, datetime
 
 """
-bzcat latest-all.json.bz2 |wikibase-dump-filter --simplify --claim 'P698&P921' |jq '[.id,.claims.P698,.claims.P921]' -c >PMID.ndjson
+bzcat latest-all.json.bz2 |wikibase-dump-filter --simplify --claim 'P698' |jq '[.id,.claims.P698,.claims.P921]' -c >PMID.ndjson
 """
 # Initiate the parser
 parser = argparse.ArgumentParser()
@@ -33,7 +33,7 @@ if ii is None:
     raise
 jj = None
 refs = []
-for j in range(ii-3, len(lynx)):
+for j in range(ii-5, len(lynx)):
     if lynx[j].find('twitter.com') != -1:
         jj = j
         break
@@ -54,7 +54,10 @@ for line in file.readlines():
     if len(pma) == 0:
         continue
     pmid = pma[0]
-    subj = arr[2]
+    try:
+        subj = arr[2]
+    except IndexError:
+        subj = [] 
     if subj is None:
         subj = [] 
     p = pmids.get(pmid)
