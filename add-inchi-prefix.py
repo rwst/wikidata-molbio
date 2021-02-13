@@ -28,5 +28,5 @@ for d in jol:
     stmt = d.get('stmt')
     inchi = d.get('inchi')
 #    ref = d.get('ref')
-    print('{} {}'.format(stmt, 'InChi='+inchi))
+    print('{} {}'.format(stmt, 'InChI='+inchi))
     #print('{{ "guid": "{}", "oldValue": "{}", "newValue": "{}" }}'.format(stmt, inchi, 'InChi='+inchi))
