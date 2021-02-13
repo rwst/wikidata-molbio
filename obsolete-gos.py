@@ -30,6 +30,7 @@ args = parser.parse_args()
 QS = args.output_qs
 dontquery = not args.query
 script = os.path.basename(sys.argv[0])[:-3]
+GORELEASE = "Q102066615"
 
 if dontquery is False:
     print('performing query...')
@@ -64,7 +65,7 @@ for d in jol:
             goids[goid] = (it,gostmt,exm,exstmt)
 
 print('reading GO')
-ont = pronto.Ontology('/home/ralf/go-ontology/src/ontology/go-edit.obo')
+ont = pronto.Ontology('/home/ralf/wikidata/go.obo')
 check = True
 obids = []
 obitems = []
@@ -95,7 +96,7 @@ newd = ndate + 'T00:00:00Z'
 for goid in obids:
     it,gostmt,exm,exstmt = goids.get(goid)
     if QS:
-        print('{}|P31|Q93740491|S248|Q93741199|S813|+{}/11'.format(it, newd))
+        print('{}|P31|Q93740491|S248|{}|S813|+{}/11'.format(it, GORELEASE, newd))
         if exm is not None:
             print('-{}|P2888|"{}"'.format(it, exm))
         aldir = als.get(it)
@@ -115,14 +116,14 @@ for goid in obids:
         j = {"id": it,
             "claims": {
                 "P31": [ { "value": "Q93740491",
-                                "references": { "P248": "Q93741199",
+                                "references": { "P248": GORELEASE,
                                     "P813": ndate }}],
                 "P686": [{"id":gostmt, "remove":True}],
                 } }
-        if repl_id is not None:
-            j.get('claims')['P1366'] = { "value": goids.get(repl_id)[0],
-                                    "references": { "P248": "Q93741199",
-                                        "P813": ndate }}
+#        if repl_id is not None:
+#            j.get('claims')['P1366'] = { "value": goids.get(repl_id)[0],
+#                                    "references": { "P248": "Q93741199",
+#                                       "P813": ndate }}
         if exstmt is not None:
             j.get('claims')['P2888'] = [{"id":exstmt, "remove":True}]
         if len(ald) > 0:
@@ -131,7 +132,7 @@ for goid in obids:
         f.write(json.dumps(j))
         f.close()
         print(json.dumps(j), flush=True)
-        ret = os.popen('wd ee t.json --summary obsolete-gos')
-        print(ret.read())
-        if ret.close() is not None:
-            print('ERROR')
+#        ret = os.popen('wd ee t.json --summary obsolete-gos')
+#        print(ret.read())
+#        if ret.close() is not None:
+#            print('ERROR')
