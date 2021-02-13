@@ -1,7 +1,31 @@
-import csv
-from sys import *
-import gzip                                                            
-import xml.etree.ElementTree as ET                                     
+import os, json, argparse, sys, datetime, time
+import xml.etree.ElementTree as ET, gzip
+
+"""
+Loads all items with IPR except domain families and checks InterPro release for additions.
+Checks also for duplicatze IPR.
+"""
+# Initiate the parser
+parser = argparse.ArgumentParser()
+parser.add_argument("-q", "--query", help="perform SPARQL query",
+        action="store_true")
+
+# Read arguments from the command line
+args = parser.parse_args()
+
+# Check for --version or -V
+dontquery = not args.query
+script = os.path.basename(sys.argv[0])[:-3]
+INTERPRO_RELEASE = 'Q102425430'
+
+if dontquery is False:
+    print('performing query...')
+    ret = os.popen('wd sparql {}.rq >{}.json'.format(script, script))
+    if ret.close() is not None:
+        raise
+file = open('{}.json'.format(script))
+s = file.read()
+jol = json.loads(s)
 
 input = gzip.open('interpro.xml.gz')                                   
 tree = ET.parse(input)
@@ -19,16 +43,14 @@ for child in root:
 #print(set(its.keys()).intersection(delids))
 
 qits = {}
-reader = csv.DictReader(open('wd-ipr.tab', 'r'), delimiter='\t')
-for item in reader:
-    iturl = item.get('item')
-    qit = iturl[iturl.rfind('/')+1:]
-    ipr = item.get('ip')
-    if ipr not in its.keys():
-#        print('{}|P31|Q81408532|S248|Q81384305|S2926|"{}"\n-{}|P31|Q417841\n-{}|P2926|"{}"'.format(qit,
-#            ipr,qit,qit,ipr))
-        continue
-    qits[ipr] = qit
+for d in jol:
+    ipr = d.get('ipr')
+    qit = d.get('item')
+    if ipr in qits.keys():
+        print('duplicate: {}'.format(ipr))
+        exit()
+    else:
+        qits[ipr] = qit
 
 for nipr in set(its.keys()).difference(set(qits.keys())):
     entry = its.get(nipr)
@@ -46,55 +68,72 @@ for nipr in set(its.keys()).difference(set(qits.keys())):
             ct = ch.getchildren()
         if ch.tag == 'found_in':
             fi = ch.getchildren()
+        ref = { "P248": INTERPRO_RELEASE }
+        refipr = { "P248": INTERPRO_RELEASE, "P2926": nipr }
+        refnam = { "P248": INTERPRO_RELEASE, "P1810": name }
+        j = {}
+        claims = { 'P2926': { 'value': nipr, 'references': refnam } }
+       
     if type == 'Family':
-        continue
-        print('CREATE\nLAST|Len|"{}"\nLAST|Den|"InterPro protein family"\nLAST|Aen|"{}"\nLAST|Aen|"{}"\nLAST|P31|Q417841|S248|Q81384305\nLAST|P2926|"{}"|S248|Q81384305'.format(
-            name, entry.attrib.get('short_name'), nipr, nipr))
+        elab,flab,dlab = "InterPro protein family", "famille InterPro", "InterPro Proteinfamilie"
+        claims['P31'] = { 'value': 'Q417841', 'references': refipr }
         if pl is not None and len(pl) > 0:
             for p in pl:
                 if p.tag == 'rel_ref':
                     ref = p.attrib.get('ipr_ref')
-                    print('LAST|P279|{}|S248|Q81384305'.format(qits.get(ref)))
+                    if qits.get(ref) is not None:
+                        claims['P279'] = { 'value': qits.get(ref), 'references': refipr }
         else:
-            print('LAST|P279|Q8054|S248|Q81384305')
+            claims['P279'] = { 'value': 'Q8054', 'references': refipr }
         if ct is not None and len(ct) > 0:
             for p in ct:
                 if p.tag == 'rel_ref':
                     ref = p.attrib.get('ipr_ref')
-                    print('LAST|P527|{}|S248|Q81384305'.format(qits.get(ref)))
-    if type == 'Domain':
-        continue
-        print('CREATE\nLAST|Len|"{}"\nLAST|Den|"InterPro domain"\nLAST|Aen|"{}"\nLAST|Aen|"{}"\nLAST|P31|Q898273|S248|Q81384305\nLAST|P2926|"{}"|S248|Q81384305'.format(
-            name, entry.attrib.get('short_name'), nipr, nipr))
+                    if qits.get(ref) is not None:
+                        claims['P527'] = { 'value': qits.get(ref), 'references': refipr }
+    elif type == 'Domain':
+        elab,flab,dlab = "InterPro domain", "Domaine InterPro", "InterPro Proteindomäne"
+        claims['P31'] = { 'value': 'Q898273', 'references': refipr }
         if pl is not None and len(pl) > 0:
             for p in pl:
                 if p.tag == 'rel_ref':
                     ref = p.attrib.get('ipr_ref')
-                    print('LAST|P279|{}|S248|Q81384305'.format(qits.get(ref)))
-    if type == 'Conserved_site':
-        continue
-        print('CREATE\nLAST|Len|"{}"\nLAST|Den|"InterPro Conserved Site"\nLAST|Aen|"{}"\nLAST|Aen|"{}"\nLAST|P31|Q7644128|S248|Q81384305\nLAST|P2926|"{}"|S248|Q81384305'.format(
-            name, entry.attrib.get('short_name'), nipr, nipr))
+                    if qits.get(ref) is not None:
+                        claims['P279'] = { 'value': qits.get(ref), 'references': refipr }
+    elif type == 'Conserved_site':
+        elab,flab,dlab = "InterPro conserved site", "Site Conservé InterPro", "InterPro Proteindomäne"
+        claims['P31'] = { 'value': 'Q7644128', 'references': refipr }
         if pl is not None and len(pl) > 0:
             for p in pl:
                 if p.tag == 'rel_ref':
                     ref = p.attrib.get('ipr_ref')
-                    print('LAST|P279|{}|S248|Q81384305'.format(qits.get(ref)))
+                    if qits.get(ref) is not None:
+                        claims['P279'] = { 'value': qits.get(ref), 'references': refipr }
         if fi is not None and len(fi) > 0:
             for p in fi:
                 if p.tag == 'rel_ref':
                     ref = p.attrib.get('ipr_ref')
-                    print('LAST|P361|{}|S248|Q81384305'.format(qits.get(ref)))
-    if type == 'Repeat':
-        print('CREATE\nLAST|Len|"{}"\nLAST|Den|"InterPro Repeat"\nLAST|Aen|"{}"\nLAST|Aen|"{}"\nLAST|P31|Q3273544|S248|Q81384305\nLAST|P2926|"{}"|S248|Q81384305'.format(
-            name, entry.attrib.get('short_name'), nipr, nipr))
+                    if qits.get(ref) is not None:
+                        claims['P361'] = { 'value': qits.get(ref), 'references': refipr }
+    elif type == 'Repeat':
+        elab,flab,dlab = "InterPro motif", "motif structurel", "Strukturmotiv"
+        claims['P31'] = { 'value': 'Q3273544', 'references': refipr }
         if pl is not None and len(pl) > 0:
             for p in pl:
                 if p.tag == 'rel_ref':
                     ref = p.attrib.get('ipr_ref')
-                    print('LAST|P279|{}|S248|Q81384305'.format(qits.get(ref)))
+                    if qits.get(ref) is not None:
+                        claims['P279'] = { 'value': qits.get(ref), 'references': refipr }
         if fi is not None and len(fi) > 0:
             for p in fi:
                 if p.tag == 'rel_ref':
                     ref = p.attrib.get('ipr_ref')
-                    print('LAST|P361|{}|S248|Q81384305'.format(qits.get(ref)))
+                    if qits.get(ref) is not None:
+                        claims['P361'] = { 'value': qits.get(ref), 'references': refipr }
+    else:
+        continue
+    j['labels'] = { "en": name }
+    j["descriptions"] = { "en": elab, "fr": flab, "de": dlab }
+    j['aliases'] = { "en": [ entry.attrib.get('short_name'), nipr ] }
+    j['claims'] = claims
+    print(json.dumps(j), flush=True)
