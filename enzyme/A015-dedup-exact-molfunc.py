@@ -2,7 +2,6 @@
 import csv, os, json, argparse, sys
 
 """
-sed 's+^.*GO:+GO:+g' query.tsv |sed 's/^GO:\([0-9]\+\).*$/GO:\1/g' |sort |uniq -d
 """
 # Initiate the parser
 parser = argparse.ArgumentParser()
