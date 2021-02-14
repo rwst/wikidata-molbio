@@ -1,10 +1,12 @@
-SELECT DISTINCT ?item ?label
+SELECT DISTINCT ?item ?label ?func ?flabel
 WHERE 
 {
   ?item wdt:P31 wd:Q67015883.
   ?item wdt:P680 ?func.
-  MINUS { ?func wdt:P279/wdt:P279* wd:Q82264 }
+#  MINUS { ?func wdt:P279/wdt:P279* wd:Q82264 }
   ?item rdfs:label ?label.
   FILTER(LANG(?label) = 'en').
+  ?func rdfs:label ?flabel.
+  FILTER(LANG(?flabel) = 'en').
 }
 
