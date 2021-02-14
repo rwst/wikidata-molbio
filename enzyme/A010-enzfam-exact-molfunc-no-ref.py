@@ -3,7 +3,7 @@ import os, json, argparse, sys, datetime
 
 """
 Use query manually to find families that don't fit the function exactly.
-Then run with query to add reference.
+Then run with query and use 'wd ar' to add reference.
 """
 
 # Initiate the parser
@@ -11,8 +11,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--output_qs", help="output to QS",
         action="store_true")
 parser.add_argument("-q", "--query", help="perform SPARQL query",
-        action="store_true")
-parser.add_argument("-Q", "--query1", help="perform SPARQL query",
         action="store_true")
 
 # Read arguments from the command line
