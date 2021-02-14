@@ -1,14 +1,20 @@
-SELECT DISTINCT ?item ?label
+SELECT DISTINCT ?item ?func ?rank
 WHERE 
 {
   ?item p:P680 ?stmt.
   ?stmt ps:P680 ?func.
+  ?stmt wikibase:rank ?rank.
   ?func wdt:P279/wdt:P279* wd:Q82264.
-  ?stmt pq:P4390 [].
+  VALUES ?mtype { wd:Q39894595 wd:Q39893449 }
+  ?stmt pq:P4390 ?mtype.
   MINUS { ?item wdt:P31 wd:Q67015883 }
   MINUS { ?item wdt:P31 wd:Q67101749 }
+  MINUS { ?item wdt:P31 wd:Q423026 }
+  MINUS { ?item wdt:P31 wd:Q7644128 }
+  MINUS { ?item wdt:P31 wd:Q616005 }
   MINUS { ?item wdt:P352 [] }
-  ?item rdfs:label ?label.
-  FILTER(LANG(?label) = 'en').
+  MINUS { ?item wdt:P279 wd:Q208467 }
+#  ?item rdfs:label ?label.
+#  FILTER(LANG(?label) = 'en').
 }
 
