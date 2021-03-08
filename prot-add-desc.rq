@@ -1,0 +1,13 @@
+
+SELECT DISTINCT ?item ?glabel ?desc
+{
+   ?item wdt:P31 wd:Q8054 .
+   ?item wdt:P703 wd:Q62116341.
+   ?item wdt:P702 ?gitem.
+   ?item rdfs:label ?label.
+   FILTER ( LANG(?label) = 'en' ).
+   ?gitem rdfs:label ?glabel.
+   FILTER ( LANG(?glabel) = 'en' ).
+   OPTIONAL { ?item schema:description ?desc.
+               FILTER (LANG(?desc) = 'en') }.
+}

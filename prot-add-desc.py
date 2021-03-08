@@ -27,7 +27,7 @@ kingdom = args.kingdom
 if len(kingdom) == 0:
     raise
 
-species = ['Q62115984']
+species = ['Q61779006']
 
 query = """
 SELECT DISTINCT ?item ?glabel ?desc
@@ -87,9 +87,9 @@ for d in jol:
     if QS:
         print('{}|Den|"{}"'.format(it, dstr))
     else:
-        print('wd sd {} en "{}"'.format(it, dstr))
-        ret = os.popen('wd sd {} en "{}"'.format(it, dstr))
-        print(ret.read())
-        if ret.close() is not None:
-            print('ERROR')
+        print('{} en "{}"'.format(it, dstr))
+        #ret = os.popen('wd sd {} en "{}"'.format(it, dstr))
+        #print(ret.read())
+        #if ret.close() is not None:
+        #    print('ERROR')
         #time.sleep(int(lag))
