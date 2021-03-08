@@ -1,0 +1,8 @@
+SELECT DISTINCT ?comp ?taxon ?ref ?ingr WHERE {
+  ?comp wdt:P235 [].
+  ?comp p:P703 ?stmt.
+  ?stmt ps:P703 ?taxon.
+  ?stmt prov:wasDerivedFrom ?refnode.
+  ?refnode pr:P248 ?ref.
+  OPTIONAL { ?ref wdt:P921 ?ingr }
+}
