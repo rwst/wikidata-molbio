@@ -1,0 +1,5 @@
+SELECT DISTINCT ?item ?ik
+WHERE 
+{
+  ?item wdt:P235 ?ik.
+}

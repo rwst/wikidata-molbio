@@ -1,0 +1,96 @@
+
+import csv, os, json, argparse, sys
+import pronto, six
+
+"""
+use stdout with wd aq, stderr with wd ar
+"""
+# Initiate the parser
+parser = argparse.ArgumentParser()
+parser.add_argument("-q", "--query", help="perform SPARQL query",
+        action="store_true")
+
+# Read arguments from the command line
+args = parser.parse_args()
+#print(args)
+
+# Check for --version or -V
+dontquery = not args.query
+script = os.path.basename(sys.argv[0])[:-3]
+MAPPING_TYPE = 'P4390'
+SKOS_EXACT = 'Q39893449'
+STATED_IN = 'P248'
+CHEBI_RELEASE = 'Q105965742'
+
+if dontquery is False:
+    print('performing query...')
+    ret = os.popen('wd sparql {}.rq1 >{}.json1'.format(script, script))
+    if ret.close() is not None:
+        raise
+file = open('{}.json1'.format(script))
+s = file.read()
+jol = json.loads(s)
+
+items = {}
+for d in jol:
+    it = d.get('item')
+    ik = d.get('ik')
+    i = items.get(ik)
+    if i is not None:
+        i.append(it)
+    else:
+        items[ik] = [it]
+
+if dontquery is False:
+    print('performing query...')
+    ret = os.popen('wd sparql {}.rq2 >{}.json2'.format(script, script))
+    if ret.close() is not None:
+        raise
+file = open('{}.json2'.format(script))
+s = file.read()
+jol = json.loads(s)
+
+chebis = {}
+exmapq = set()
+for d in jol:
+    it = d.get('item')
+    chebi = d.get('chebi')
+    ik = d.get('ik')
+    mapq = d.get('mapq')
+    stmt = d.get('stmt')
+    if mapq == 'Q39893449':
+        exmapq.add(it)
+    c = chebis.get(it)
+    if c is not None:
+        c.append((chebi, stmt))
+    else:
+        chebis[it] = [(chebi, stmt)]
+
+ont = pronto.Ontology('chebi.obo')
+missing = 0
+for term in ont.terms():
+    ik = None
+    for ann in term.annotations:
+        if ann.property == 'http://purl.obolibrary.org/obo/chebi/inchikey':
+            ik = ann.literal
+            break
+    if ik is None:
+        continue
+    its = items.get(ik)
+    if its is None:
+        missing = missing + 1
+        continue
+    for it in its:
+        if it in exmapq:
+            continue
+        chs = chebis.get(it)
+        ID = term.id[6:]
+        if chs is not None:
+            for chebiid, stmt in chs:
+                if chebiid == ID:
+                    print('{} {} {}'.format(stmt.rstrip(), MAPPING_TYPE, SKOS_EXACT))
+                    print('{} {} {}'.format(stmt.rstrip(), STATED_IN, CHEBI_RELEASE), file=sys.stderr)
+                    break
+
+#print('Missing: {}'.format(missing))
+
