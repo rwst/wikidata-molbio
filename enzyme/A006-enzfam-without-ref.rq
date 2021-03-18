@@ -1,0 +1,13 @@
+SELECT DISTINCT ?stmt1
+WHERE 
+{
+  ?item p:P31 ?stmt1.
+  ?stmt1 ps:P31 wd:Q67015883.
+  MINUS { ?stmt1 prov:wasDerivedFrom [] }
+  ?item p:P680 ?stmt2.
+  ?stmt2 ps:P680 ?func.
+  { ?stmt2 pq:P4390 wd:Q39894595. } UNION { ?stmt2 pq:P4390 wd:Q39893449. }
+  ?func wdt:P279/wdt:P279* wd:Q82264.
+  ?stmt2 prov:wasDerivedFrom [].
+}
+

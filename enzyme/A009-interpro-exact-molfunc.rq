@@ -1,0 +1,8 @@
+SELECT DISTINCT ?stmt
+WHERE 
+{
+  ?item wdt:P2926 [].
+  ?item p:P680 ?stmt.
+  ?stmt pq:P4390 wd:Q39893449.
+}
+
