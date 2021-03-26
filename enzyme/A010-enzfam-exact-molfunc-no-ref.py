@@ -20,7 +20,10 @@ args = parser.parse_args()
 QS = args.output_qs
 dontquery = not args.query
 script = os.path.basename(sys.argv[0])[:-3]
-GORELEASE = "Q102066615"
+#STATED_IN = 'P248'
+INFERRED_FROM = 'P3452'
+DEFINITION = 'Q106205899'
+GOID = 'P686'
 
 if dontquery is False:
     print('performing query...')
@@ -32,13 +35,14 @@ with open('{}.json'.format(script)) as file:
     jol = json.loads(s)
     print('read {} records'.format(len(jol)), flush=True)
 
-ndate = datetime.date.today().isoformat()
+#ndate = datetime.date.today().isoformat()
 for d in jol:
     it = d.get('item')
     stmt = d.get('stmt')
+    goid = d.get('fgo')
 
     j = {"guid": stmt,
-            "snaks": { "P248": GORELEASE,
-                        "P813": ndate },
+            "snaks": { INFERRED_FROM: DEFINITION,
+                        GOID: goid },
             }
     print(json.dumps(j), flush=True)
