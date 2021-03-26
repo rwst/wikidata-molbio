@@ -1,0 +1,14 @@
+SELECT DISTINCT ?item ?label ?stmt2
+WHERE 
+{
+  ?item wdt:P31 wd:Q67015883.
+  ?item p:P680 ?stmt.
+  ?stmt ps:P680 ?func.
+  ?stmt pq:P4390 wd:Q39893449.
+  ?item p:P680 ?stmt2.
+  ?stmt2 ps:P680 ?func2.
+  ?stmt2 pq:P4390 wd:Q39894595.
+  ?item rdfs:label ?label.
+  FILTER(LANG(?label) = 'en').
+}
+

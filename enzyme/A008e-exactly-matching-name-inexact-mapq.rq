@@ -1,0 +1,17 @@
+SELECT DISTINCT ?item ?stmt ?func ?mapq
+WHERE 
+{
+  ?item wdt:P31 wd:Q67015883.
+  MINUS { ?item wdt:P2926 []. }
+  ?item p:P680 ?stmt.
+  ?stmt ps:P680 ?func.
+  MINUS { ?stmt pq:P4390 wd:Q39893449. }
+  OPTIONAL { ?stmt pq:P4390 ?mapq. }
+  ?item rdfs:label ?label.
+  FILTER(LANG(?label) = 'en').
+  ?func wdt:P686 ?fgo.
+  ?func rdfs:label ?flabel.
+  FILTER(LANG(?flabel) = 'en').
+  FILTER(UCASE(STRBEFORE(?flabel, ' activity')) = UCASE(?label))
+}
+
