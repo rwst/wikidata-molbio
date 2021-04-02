@@ -23,8 +23,8 @@ def wdee(j):
         print('ERROR')
 
 def ensure(subit, obit, sideq, prop):
-    GOREF = "Q93741199"
-    RHREF = "Q96482790"
+    GOREF = "Q106313970"
+    RHREF = "Q106313892"
     if QS:
         if sideq is None:
             print('{}|{}|{}|S248|{}|S248|{}'.format(subit, prop, obit, GOREF, RHREF))
@@ -44,14 +44,14 @@ def ensure(subit, obit, sideq, prop):
                 j = {"id": subit, "claims": { prop: [{ "id": os[0],
                     "value": obit,
                     "references": { "P248": [ GOREF, RHREF ] }}] } }
-                wdee(j)
+                print(json.dumps(j), flush=True)
                 return
             # add ref to stmt
             j = {"id": subit, "claims": { prop: [{ "id": os[1],
                 "value": obit,
                 "qualifiers": { "P361": sideq },
                 "references": { "P248": [ GOREF, RHREF ] }}] } }
-            wdee(j)
+            print(json.dumps(j), flush=True)
             return
     # create stmt
     if sideq is None:
@@ -61,7 +61,7 @@ def ensure(subit, obit, sideq, prop):
         j = {"id": subit, "claims": { prop: [{ "value": obit,
             "qualifiers": { "P361": sideq },
             "references": { "P248": [ GOREF, RHREF ] }}] } }
-    wdee(j)
+        print(json.dumps(j), flush=True)
 
 
 # Initiate the parser
@@ -91,6 +91,8 @@ jol = json.loads(s)
 chits = {}
 goits = {}
 stmts = {}
+chitems = set()
+chdups = set()
 for d in jol:
     item = d.get('item')
     chid = d.get('chid')
@@ -99,6 +101,9 @@ for d in jol:
         print('CANT HAPPEN: {}'.format(chid))
         exit()
     if chid is not None:
+        if item in chitems:
+            chdups.add(item)
+        chitems.add(item)
         chits[chid] = item
         continue
     else:
@@ -106,9 +111,11 @@ for d in jol:
     s = stmts.get(item)
     obj = d.get('obj')
     tup = (d.get('stmt'), d.get('ref'), d.get('side'))
+    if tup[2] is None:
+        continue
     if s is not None:
         if s.get(obj) is not None:
-            if s.get(obj)[1] != tup[1]:
+            if s.get(obj)[2] != tup[2]:
                 continue
             print('CANT HAPPEN: {} {}'.format(item, obj))
             exit()
@@ -116,11 +123,11 @@ for d in jol:
     else:
         stmts[item] = { obj : tup }
 
-print('Reading Rhea')
+print('Reading Rhea', file=sys.stderr)
 rhea = rdflib.Graph()
 rhea.parse("/home/ralf/wikidata/rhea.rdf") 
-print('Reading GO')
-ont = pronto.Ontology('/home/ralf/go-ontology/src/ontology/go-edit.obo')
+print('Reading GO', file=sys.stderr)
+ont = pronto.Ontology('/home/ralf/wikidata/go.obo')
 
 dontputinchem = set(['Q23905964','Q27104100','Q9154808','Q27126319','Q27124397',
         'Q60711173','Q60711368','Q171877','Q27225747','Q27102088','Q27104095',
@@ -165,6 +172,8 @@ WHERE {{
         if chit is None:
             print('missing: {}'.format(chebid))
         else:
+            if chit in chdups:
+                print('WARNING: {}'.format(chit), file=sys.stderr)
             ensure(goit, chit, sideq, 'P527')
             if chit not in dontputinchem:
                 ensure(chit, goit, None, 'P361')
