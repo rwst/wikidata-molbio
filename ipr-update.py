@@ -3,12 +3,13 @@ import xml.etree.ElementTree as ET, gzip
 
 """
 Loads all items with IPR except domain families and checks InterPro release for additions.
-Checks also for duplicatze IPR.
+Checks also for duplicate IPR. Use with wd ce.
 """
 # Initiate the parser
 parser = argparse.ArgumentParser()
 parser.add_argument("-q", "--query", help="perform SPARQL query",
         action="store_true")
+parser.add_argument('-i', '--iprel', help='InterPro release item', required=True)
 
 # Read arguments from the command line
 args = parser.parse_args()
@@ -16,7 +17,7 @@ args = parser.parse_args()
 # Check for --version or -V
 dontquery = not args.query
 script = os.path.basename(sys.argv[0])[:-3]
-INTERPRO_RELEASE = 'Q102425430'
+INTERPRO_RELEASE = args.iprel
 
 if dontquery is False:
     print('performing query...')
