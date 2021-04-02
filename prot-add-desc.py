@@ -9,8 +9,8 @@ Add missing descriptions
 parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--output_qs", help="output to QS",
         action="store_true")
-parser.add_argument('-t', '--taxon', action='store')
-parser.add_argument('-k', '--kingdom', action='store')
+parser.add_argument('-t', '--taxon', action='store', required=True)
+parser.add_argument('-k', '--kingdom', action='store', required=True)
 parser.add_argument('-l', '--lag', action='store')
 
 # Read arguments from the command line
@@ -26,8 +26,6 @@ if len(taxon) == 0:
 kingdom = args.kingdom
 if len(kingdom) == 0:
     raise
-
-species = ['Q61779006']
 
 query = """
 SELECT DISTINCT ?item ?glabel ?desc
