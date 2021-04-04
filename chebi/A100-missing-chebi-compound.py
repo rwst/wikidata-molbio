@@ -36,6 +36,7 @@ for item in reader:
     if cid is not None and len(cid) > 0:
         cids[ch] = cid
 
+print('Reading ontology...', file=sys.stderr)
 ont = pronto.Ontology('chebi.obo')
 
 ent = {}
@@ -46,9 +47,13 @@ desc = { 'en': 'chemical compound',
         }
 file = open('missing')
 for line in file.readlines():
-    s = line.find(' ')
-    ID = line[:s]
+    ID = line.rstrip()
+    if len(ID) == 0 or ID[:6] != 'CHEBI:':
+        continue
     term = ont.get(ID)
+    if term is None:
+        print("not found: {}".format(ID), file=sys.stderr)
+        continue
     ik = None
     inchi = None
     charge = None
@@ -75,6 +80,8 @@ for line in file.readlines():
             ik = ann.literal
         if ann.property == 'http://purl.obolibrary.org/obo/chebi/inchi':
             inchi = ann.literal
+            if len(inchi) > 1490:
+                inchi = None
         if ann.property == 'http://purl.obolibrary.org/obo/chebi/charge':
             charge = ann.literal
     if ik is None:
