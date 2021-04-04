@@ -21,6 +21,7 @@ MAPPING_TYPE = 'P4390'
 SKOS_EXACT = 'Q39893449'
 STATED_IN = 'P248'
 CHEBI_RELEASE = 'Q105965742'
+blacklist = ['Q26981430', 'Q623', 'Q1226']
 
 if dontquery is False:
     print('performing query...')
@@ -80,6 +81,8 @@ for term in ont.terms():
         missing = missing + 1
         continue
     for it in its:
+        if it in blacklist:
+            continue
         if it in exmapq:
             continue
         chs = chebis.get(it)
@@ -87,6 +90,8 @@ for term in ont.terms():
         if chs is not None and ID in chs:
             # handled in other module
             continue
+        if term is tautomer:
+            don't add CHEBI
         j = {"id": it,
             "claims": {
                  "P683": { "value": ID,
