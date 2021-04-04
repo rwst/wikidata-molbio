@@ -1,0 +1,8 @@
+SELECT DISTINCT ?item ?chebi ?taut
+WHERE 
+{
+  ?item p:P683 ?stmt.
+  ?stmt ps:P683 ?chebi.
+  ?stmt pq:P4390 wd:Q39893449.
+  OPTIONAL { ?item wdt:P6185 ?taut }
+}
