@@ -81,7 +81,7 @@ for ch in items.keys():
                     if ti in tt:
                         continue
                 ti = items.get(tc)
-                if ti is None:
+                if ti is None or ti == items.get(ch):
                     continue
                 j = {"id": items.get(ch), "claims": { 'P6185': [{
                     "value": ti,
