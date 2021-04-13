@@ -55,6 +55,8 @@ for ref in reflist:
     if doi is None:
         continue
     doi = doi.upper()
+    if doi[len(doi)-1:] == '.':
+        doi = doi[:-1]
     d = dois.get(doi)
     if d is None:
         print('DOI {} is missing'.format(doi), file=sys.stderr)
