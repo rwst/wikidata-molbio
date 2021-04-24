@@ -1,0 +1,12 @@
+SELECT DISTINCT ?item ?gofunc ?url ?stmt
+WHERE 
+{
+  ?item wdt:P31 wd:Q14860489.
+  ?item wdt:P686 ?gofunc.
+  OPTIONAL {
+    ?item p:P2888 ?stmt.
+    ?stmt ps:P2888 ?url.
+    FILTER(STRSTARTS(STR(?url), 'https://www.rhea-db.org/rhea/'))
+  }
+}
+

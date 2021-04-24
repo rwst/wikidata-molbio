@@ -1,0 +1,10 @@
+SELECT DISTINCT ?stmt
+WHERE 
+{
+  ?item wdt:P31 wd:Q14860489.
+  ?item p:P2888 ?stmt.
+  MINUS { ?stmt prov:wasDerivedFrom ?refnode }
+  ?stmt ps:P2888 ?url.
+  FILTER(STRSTARTS(STR(?url), 'https://www.rhea-db.org/rhea/'))
+}
+

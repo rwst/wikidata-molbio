@@ -1,0 +1,10 @@
+SELECT DISTINCT ?item 
+{
+  ?item wdt:P683 ?chid.
+  ?item p:P361 ?stmt1.
+  ?stmt1 ps:P361 ?obj.
+  ?item p:P361 ?stmt2.
+  ?stmt2 ps:P361 ?obj.
+  FILTER(?stmt1 != ?stmt2)
+}
+
