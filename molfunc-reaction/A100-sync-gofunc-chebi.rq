@@ -1,17 +1,25 @@
-SELECT DISTINCT ?item ?goid ?chid ?stmt ?obj ?ref ?side
+SELECT DISTINCT ?item ?goid ?exm ?chid ?stmt ?obj ?side
 {
-  { ?item wdt:P686 ?goid.
-    ?item wdt:P31 wd:Q14860489
-  } UNION { ?item wdt:P683 ?chid. }.
-  OPTIONAL {
+  {
     ?item wdt:P686 ?goid.
-    ?item p:P527 ?stmt.
-    ?stmt ps:P527 ?obj.
+    ?item wdt:P31 wd:Q14860489.
+    ?item wdt:P2888 ?exm.
+    FILTER(STRSTARTS(STR(?exm), 'https://www.rhea-db.org/rhea/'))
     OPTIONAL {
-      ?stmt pq:P361 ?side.
+      ?item p:P527 ?stmt.
+      ?stmt ps:P527 ?obj.
+      OPTIONAL {
+        ?stmt pq:P361 ?side.
+      }
     }
+  }
+  UNION
+  { 
+    ?item wdt:P683 ?chid.
     OPTIONAL {
-      ?stmt prov:wasDerivedFrom ?ref.
+      ?item p:P361 ?stmt.
+      ?stmt ps:P361 ?obj.
+      ?obj wdt:P31 wd:Q14860489.
     }
   }
 }
