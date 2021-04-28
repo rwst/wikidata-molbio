@@ -1,0 +1,7 @@
+SELECT DISTINCT ?item ?label ?goid
+WHERE 
+{
+  ?item wdt:P686 ?goid.
+  ?item rdfs:label ?label.
+  FILTER(lang(?label) = 'en')
+}

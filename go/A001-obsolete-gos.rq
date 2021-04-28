@@ -1,0 +1,10 @@
+SELECT DISTINCT ?item ?goid ?gostmt ?exm ?exstmt ?rank WHERE {
+  ?item p:P686 ?gostmt.
+  ?gostmt ps:P686 ?goid.
+  ?gostmt wikibase:rank ?rank.
+  OPTIONAL {
+      ?item p:P2888 ?exstmt.
+      ?exstmt ps:P2888 ?exm.
+  }
+}
+
