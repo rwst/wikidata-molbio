@@ -1,0 +1,17 @@
+SELECT DISTINCT ?item ?chebi ?stmt ?ikey ?refnode ?src ?sdate
+{ 
+  ?item wdt:P683 ?chebi.
+  OPTIONAL {
+    ?item p:P235 ?stmt.
+    ?stmt ps:P235 ?ikey.
+    OPTIONAL {
+      ?stmt prov:wasDerivedFrom ?refnode.
+      OPTIONAL {
+        ?refnode pr:P248 ?src.
+        ?src wdt:P629 wd:Q902623.
+        ?src wdt:P577 ?sdate.
+      }
+    }
+  }
+}
+

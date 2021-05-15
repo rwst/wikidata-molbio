@@ -2,7 +2,9 @@
 import pronto, six, csv, os, json, argparse, sys, datetime, time
 
 """
-Add missing descriptions
+Add missing descriptions, use with wd ee
+Adds standard descriptions to proteins without one.
+Parameters (mandatory): taxon item ID, kingdom adjective
 """
 
 # Initiate the parser
@@ -45,19 +47,15 @@ f = open('{}.rq'.format(script), 'w')
 f.write(query)
 f.close()
 
-'''
-Adds standard descriptions to proteins without one.
-Parameters (mandatory): taxon item ID, kingdom adjective
-'''
 
-print('performing query...')
+print('performing query...', file=sys.stderr)
 ret = os.popen('wd sparql {}.rq >{}.json'.format(script, script))
 if ret.close() is not None:
     raise
 with open('{}.json'.format(script)) as file:
     s = file.read()
     jol = json.loads(s)
-    print('read {} records'.format(len(jol)), flush=True)
+    print('read {} records'.format(len(jol)), file=sys.stderr, flush=True)
 
 ret = os.popen('wd l {} -l en'.format(taxon))
 tstr = ret.read()
@@ -85,7 +83,8 @@ for d in jol:
     if QS:
         print('{}|Den|"{}"'.format(it, dstr))
     else:
-        print('{} en "{}"'.format(it, dstr))
+        j = { 'id': it, 'descriptions': { 'en': dstr } }
+        print(json.dumps(j))
         #ret = os.popen('wd sd {} en "{}"'.format(it, dstr))
         #print(ret.read())
         #if ret.close() is not None:

@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET, gzip
 
 """
 Loads all items with IPR except domain families and checks InterPro release for obsoletions.
-Checks also for duplicatze IPR.
+Checks also for duplicate IPR. Use with wd ee.
 """
 # Initiate the parser
 parser = argparse.ArgumentParser()
@@ -12,7 +12,7 @@ parser.add_argument("-s", "--output_qs", help="output to QS",
         action="store_true")
 parser.add_argument("-q", "--query", help="perform SPARQL query",
         action="store_true")
-parser.add_argument('-l', '--lag', action='store')
+parser.add_argument('-i', '--iprel', help='InterPro release item', required=True)
 
 # Read arguments from the command line
 args = parser.parse_args()
@@ -20,14 +20,11 @@ args = parser.parse_args()
 # Check for --version or -V
 QS = args.output_qs
 dontquery = not args.query
-lag = args.lag
-if lag is None:
-    lag =0
 script = os.path.basename(sys.argv[0])[:-3]
-INTERPRO_RELEASE = 'Q102425430'
+INTERPRO_RELEASE = args.iprel
 
 if dontquery is False:
-    print('performing query...')
+    print('performing query...', file=sys.stderr)
     ret = os.popen('wd sparql {}.rq >{}.json'.format(script, script))
     if ret.close() is not None:
         raise
@@ -53,7 +50,7 @@ for d in jol:
     qit = d.get('item')
     stmt = d.get('stmt')
     if ipr in qits.keys():
-        print('duplicate: {}'.format(ipr))
+        print('duplicate: {}: {} {}'.format(ipr, qit, qits.get(ipr)), file=sys.stderr)
         exit()
     else:
         qits[ipr] = (qit, stmt)

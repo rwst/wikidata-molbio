@@ -66,10 +66,12 @@ if do_list:
 
 dmap = { "en": { 'InterPro Family': 'protein family',
                 'InterPro protein family': 'protein family',
+                'InterPro Domain': 'protein domain',
                 'InterPro Conserved Site': 'conserved site'},
         "fr": { 'Domaine InterPro': 'domaine protéique',
                 'Site Conservé InterPro': 'site conservé',
                 'famille InterPro': 'famille de protéines' },
+        "de": { 'InterPro Proteinfamilie': 'Proteinfamilie' },
         "nn": { 'InterPro-familie': 'proteinfamilie' }}
 
 for qit in set(desc.keys()).union(set(alias.keys())):
