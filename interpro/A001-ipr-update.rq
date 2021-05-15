@@ -1,0 +1,11 @@
+SELECT DISTINCT ?item ?ipr
+{ 
+  ?item wdt:P2926 ?ipr.
+  MINUS { 
+    ?item p:P31 ?stmt.
+    ?stmt ps:P31 wd:Q81505329.
+    ?stmt pq:P642 ?dom.
+    ?dom wdt:P2926 []
+  }
+}
+
