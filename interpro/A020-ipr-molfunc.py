@@ -9,6 +9,7 @@ Checks also for duplicatze IPR.
 parser = argparse.ArgumentParser()
 parser.add_argument("-q", "--query", help="perform SPARQL query",
         action="store_true")
+parser.add_argument('-i', '--iprel', help='InterPro release item', required=True)
 
 # Read arguments from the command line
 args = parser.parse_args()
@@ -16,10 +17,10 @@ args = parser.parse_args()
 # Check for --version or -V
 dontquery = not args.query
 script = os.path.basename(sys.argv[0])[:-3]
-INTERPRO_RELEASE = 'Q106839946'
+INTERPRO_RELEASE = args.iprel
 
 if dontquery is False:
-    print('performing query...')
+    print('performing query...', file=sys.stderr)
     ret = os.popen('wd sparql {}.rq >{}.json'.format(script, script))
     if ret.close() is not None:
         raise
@@ -37,7 +38,7 @@ f.write(query)
 f.close()
 
 if dontquery is False:
-    print('performing query...')
+    print('performing query...', file=sys.stderr)
     ret = os.popen('wd sparql t.rq >t.json')
     if ret.close() is not None:
         raise
@@ -66,7 +67,8 @@ goids = {}
 for d in jol:
     ipr = d.get('ipr')
     qit = d.get('item')
-    if d.get('prop') is not None:
+    p = d.get('prop')
+    if p is not None and len(p) > 0:
         continue
     if ipr not in qits.keys():
         qits[ipr] = qit
@@ -86,7 +88,7 @@ for d in jol:
     goid = d.get('goid')
     qit = d.get('item')
     if goid in qits.keys():
-        print('duplicate: {}'.format(goid))
+        print('duplicate: {}'.format(goid), file=sys.stderr)
         exit()
     else:
         goits[goid] = qit
@@ -96,7 +98,7 @@ qual = { "P4390": "Q39894595" }
 for nipr in qits.keys():
     entry = its.get(nipr)
     if entry is None:
-        print('not found: {}'.format(nipr))
+        print('not found: {}'.format(nipr), file=sys.stderr)
         exit()
     type = entry.attrib.get('type')
     ch = None

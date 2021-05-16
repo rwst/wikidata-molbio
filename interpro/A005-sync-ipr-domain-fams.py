@@ -13,9 +13,11 @@ parser.add_argument("-s", "--output_qs", help="output to QS",
         action="store_true")
 parser.add_argument("-q", "--query", help="perform SPARQL query",
         action="store_true")
+parser.add_argument('-i', '--iprel', help='InterPro release item', required=True)
 
 # Read arguments from the command line
 args = parser.parse_args()
+IPREL = args.iprel
 
 # Check for --version or -V
 QS = args.output_qs
@@ -23,7 +25,7 @@ dontquery = not args.query
 script = os.path.basename(sys.argv[0])[:-3]
 
 if dontquery is False:
-    print('performing query...')
+    print('performing query...', file=sys.stderr, flush=True)
     ret = os.popen('wd sparql {}.rq1 >{}.tmp'.format(script, script))
     if ret.close() is not None:
         raise
@@ -51,7 +53,7 @@ for child in root:
                 labels[ipr] = ch.text
 
 if dontquery is False:
-    print('performing query...')
+    print('performing query...', file=sys.stderr, flush=True)
     ret = os.popen('wd sparql {}.rq >{}.json'.format(script, script))
     if ret.close() is not None:
         raise
@@ -59,29 +61,32 @@ file = open('{}.json'.format(script))
 s = file.read()
 jol = json.loads(s)
 
+blacklist = ['Q24777324']
 qits = {}
 assfams = {}
-print('Manual Task 1: clean obsolete families, merge with domain')
+print('Manual Task 1: clean obsolete families, merge with domain', file=sys.stderr, flush=True)
 for d in jol:
     ipr = d.get('ipr')
     qit = d.get('item')
     stmt = d.get('stmt')
     q = qits.get(ipr)
+    if qit in blacklist:
+        continue
     if ipr in domids and stmt is None:
         if q is not None and q != qit:
-            print('duplicate IPR claim: {} {} {}'.format(q, qit, ipr))
+            print('duplicate IPR claim: {} {} {}'.format(q, qit, ipr), file=sys.stderr, flush=True)
         else:
             qits[ipr] = qit
     if stmt is not None:
         adomipr = d.get('adomipr')
         f = assfams.get(adomipr)
         if f is not None and f != qit:
-            print('duplicate association: {} {} {}'.format(f, qit, adomipr))
+            print('duplicate association: {} {} {}'.format(f, qit, adomipr), file=sys.stderr, flush=True)
             raise
         else:
             assfams[adomipr] = qit
         if adomipr not in allids:
-            print(adomipr, qit, ipr)
+            print(adomipr, qit, ipr, file=sys.stderr, flush=True)
             continue
 
 for nipr in domids.difference(set(assfams.keys())):
@@ -129,19 +134,19 @@ for nipr in domids.difference(set(assfams.keys())):
             "claims": {
                  "P31": { "value": "Q81505329",
                      "qualifiers": { "P642": qit },
-                     "references": { "P248": "Q95046663"} },
+                     "references": { "P248": IPREL } },
                  "P527": { "value": qit,
-                     "references": { "P248": "Q95046663"} },
+                     "references": { "P248": IPREL } },
                  "P2926": { "value": nipr,
-                     "references": { "P248": "Q95046663"} },
+                     "references": { "P248": IPREL } },
                     }
                 }
-        f = open('t.json', 'w')
-        f.write(json.dumps(j))
-        f.close()
+        #f = open('t.json', 'w')
+        #print(json.dumps(j))
+        #f.close()
         print(json.dumps(j), flush=True)
-        ret = os.popen('wd ce t.json --summary sync-ipr-domain-fams')
-        print(ret.read())
-        if ret.close() is not None:
-            print('ERROR')
+        #ret = os.popen('wd ce t.json --summary sync-ipr-domain-fams')
+        #print(ret.read())
+        #if ret.close() is not None:
+        #    print('ERROR')
        
