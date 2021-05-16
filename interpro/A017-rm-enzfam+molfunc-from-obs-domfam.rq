@@ -1,0 +1,17 @@
+SELECT DISTINCT ?stmt
+{
+  ?p p:P31 ?s.
+  ?s ps:P31 wd:Q81505329.
+  ?s pq:P642 ?dom.
+  ?dom wdt:P31 wd:Q81408532.
+  {
+    ?p p:P31 ?stmt.
+    ?stmt ps:P31 wd:Q67015883.
+  }
+  UNION
+  {
+    ?p p:P680 ?stmt.
+    ?stmt ps:P680 [].
+  }
+}
+
