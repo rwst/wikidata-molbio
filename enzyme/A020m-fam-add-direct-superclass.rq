@@ -1,0 +1,13 @@
+SELECT DISTINCT ?item ?goid ?skos ?ipr
+{
+  VALUES ?groups { wd:Q67015883 wd:Q84467700 wd:Q417841 wd:Q7251477 wd:Q98119151 wd:Q81505329 wd:Q67101072 wd:Q67101749 wd:Q68461428 }
+  ?item wdt:P31 ?groups.
+  ?item p:P680 ?stmt.
+  ?stmt ps:P680 ?func.
+  ?stmt pq:P4390 ?skos.
+  ?stmt prov:wasDerivedFrom [].
+  ?func wdt:P31 wd:Q14860489.
+  ?func wdt:P686 ?goid.
+  OPTIONAL { ?item wdt:P2926 ?ipr }
+}
+
