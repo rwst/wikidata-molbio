@@ -7,6 +7,7 @@ to the direct superclass according to GO, then add it.
   family A: mofunc---> activity a
   family B: mofunc---> activity b
   then A: P279---> B if in Gene Ontology: term a: is_a term b
+Use with wd ee.
 """
 # Initiate the parser
 parser = argparse.ArgumentParser()
@@ -54,7 +55,7 @@ for d in jol:
     else:
         goids[goid] = (qit,[supit])
 
-ont = pronto.Ontology('/home/ralf/go-ontology/src/ontology/go-edit.obo')
+ont = pronto.Ontology('/home/ralf/wikidata/go-plus.owl')
 for goid in goids.keys():
     term = ont.get(goid)
     qit,supclaims = goids.get(goid)
@@ -73,12 +74,12 @@ for goid in goids.keys():
                         }
                         }
                     }
-            f = open('t.json', 'w')
-            f.write(json.dumps(j))
-            f.close()
+            #f = open('t.json', 'w')
+            #f.write(json.dumps(j))
+            #f.close()
             print(json.dumps(j), flush=True)
-            ret = os.popen('wd ee t.json --summary fam-subc-from-isa')
-            print(ret.read())
-            if ret.close() is not None:
-                print('ERROR')
-            time.sleep(int(lag))
+            #ret = os.popen('wd ee t.json --summary fam-subc-from-isa')
+            #print(ret.read())
+            #if ret.close() is not None:
+             #   print('ERROR')
+            #time.sleep(int(lag))

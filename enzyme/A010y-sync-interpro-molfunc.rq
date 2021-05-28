@@ -1,12 +1,12 @@
-SELECT DISTINCT ?item ?stmt ?func ?fgo
-WHERE 
-{
+SELECT DISTINCT ?item ?ipr ?goid ?prop
+{  
   ?item wdt:P2926 ?ipr.
-  MINUS { ?item wdt:P31 wd:Q898273 }
   OPTIONAL {
-    ?item p:P680 ?stmt.
-    ?stmt ps:P680 ?func.
-    ?func wdt:P686 ?fgo
+    ?item wdt:P680 ?func.
+    ?func wdt:P686 ?goid
   }
-}
+  OPTIONAL {
+    ?item ?prop wd:Q898273
+  }
+} 
 
