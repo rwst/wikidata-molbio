@@ -1,0 +1,13 @@
+SELECT DISTINCT ?item ?ipr ?stmt ?supipr ?ref
+{ 
+  VALUES ?groups { wd:Q67015883 wd:Q84467700 wd:Q417841 wd:Q7251477 wd:Q98119151 wd:Q81505329 wd:Q67101072 wd:Q67101749 wd:Q68461428 }
+  ?item wdt:P31 ?groups.
+  ?item wdt:P2926 ?ipr.
+  OPTIONAL {
+    ?item p:P279 ?stmt.
+    ?stmt ps:P279 ?super.
+    ?super wdt:P2926 ?supipr.
+    OPTIONAL { ?stmt prov:wasDerivedFrom ?ref. }
+  }
+}
+
