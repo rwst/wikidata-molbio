@@ -1,0 +1,20 @@
+SELECT DISTINCT ?item ?itemLabel ?super
+WHERE 
+{
+  VALUES ?class { wd:Q47154513 wd:Q72044356 wd:Q17339814 wd:Q72070508 }
+  VALUES ?refs { wd:Q902163 wd:Q47154604 wd:Q107414074 wd:Q107422103 wd:Q3343212 }
+  ?item p:P31 ?stmt.
+  ?stmt ps:P31 ?class.
+  ?stmt prov:wasDerivedFrom ?refnode.
+  { ?refnode pr:P248 ?refs. }
+  UNION
+  { ?refnode pr:P887 wd:Q84423633. }
+  VALUES ?refs2 { wd:Q902163 wd:Q47154604 wd:Q107414074 wd:Q107422103 wd:Q3343212 }
+  ?item p:P279 ?stmt2.
+  ?stmt2 ps:P279 ?super.
+  ?stmt2 prov:wasDerivedFrom ?refnode2.
+  { ?refnode2 pr:P248 ?refs2. }
+  UNION
+  { ?refnode2 pr:P887 wd:Q84423633. }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}

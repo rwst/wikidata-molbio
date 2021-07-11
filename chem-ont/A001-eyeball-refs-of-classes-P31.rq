@@ -1,0 +1,11 @@
+SELECT DISTINCT ?refp ?pLabel ?refv ?refvLabel 
+WHERE 
+{
+  VALUES ?class { wd:Q47154513 wd:Q72044356 wd:Q17339814 }
+  ?item p:P31 ?stmt.
+  ?stmt ps:P31 ?class.
+  ?stmt prov:wasDerivedFrom ?refnode.
+  ?refnode ?refp ?refv.
+  BIND( IRI(REPLACE( STR(?refp),"prop/reference/","entity/" )) AS ?p).
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}
