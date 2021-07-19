@@ -1,7 +1,7 @@
 SELECT DISTINCT ?refp ?pLabel ?refv ?refvLabel 
 WHERE 
 {
-  VALUES ?class { wd:Q47154513 wd:Q72044356 wd:Q17339814 }
+  VALUES ?class { wd:Q47154513 wd:Q72044356 wd:Q17339814 wd:Q56256086 }
   ?item p:P31 ?stmt.
   ?stmt ps:P31 ?class.
   ?stmt prov:wasDerivedFrom ?refnode.

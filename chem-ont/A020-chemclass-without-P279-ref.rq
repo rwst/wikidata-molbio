@@ -1,7 +1,7 @@
 SELECT DISTINCT ?item ?itemLabel
 WHERE 
 {
-  VALUES ?class { wd:Q47154513 wd:Q72044356 wd:Q17339814 wd:Q72070508 }
+  VALUES ?class { wd:Q47154513 wd:Q72044356 wd:Q17339814 wd:Q72070508 wd:Q56256086 }
   VALUES ?refs { wd:Q902163 wd:Q47154604 }
   ?item p:P31 ?stmt.
   ?stmt ps:P31 ?class.

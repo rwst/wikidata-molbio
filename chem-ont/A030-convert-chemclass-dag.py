@@ -43,6 +43,9 @@ items['Q2393187'] = 'Q43460564'
 labels['Q2393187'] = 'molecular entity'
 labels['Q43460564'] = 'chemical entity'
 
+#print('Q415812' in set(items.keys()).union(set(['Q43460564'])))
+#print([it for it,itsuplist in items.items() if 'Q415812' in itsuplist ])
+
 edges = {}
 for it,itsuplist in items.items():
     for sup in itsuplist:
@@ -52,6 +55,7 @@ for it,itsuplist in items.items():
                 edges[sup] = set([it])
             else:
                 e.add(it)
+#print(edges.get('Q415812'))
 
 seen = set()
 def walk(E, edges, prefix):
@@ -65,10 +69,12 @@ def walk(E, edges, prefix):
     seen.add(E)
     children = edges.get(E)
     prefix = ' │   ' + prefix
-    if len(prefix) > 50 or children is None:
+    if len(prefix) > 70 or children is None:
         return
     for c in sorted(children, key=lambda c: labels.get(c)):
         walk(c, edges, prefix)
 
 walk('Q43460564', edges, ' ')
+print()
+walk('Q36496', edges, ' ')
 
