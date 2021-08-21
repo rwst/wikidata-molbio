@@ -1,0 +1,7 @@
+
+        SELECT ?smarts
+        WHERE
+        {
+          wd:Q66124573 wdt:P8533 ?smarts.
+        }
+        
