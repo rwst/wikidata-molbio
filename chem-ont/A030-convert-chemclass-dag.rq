@@ -16,5 +16,6 @@ WHERE
   { ?refnode2 pr:P248 ?refs2. }
   UNION
   { ?refnode2 pr:P887 wd:Q84423633. }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+  ?item rdfs:label ?itemLabel.
+  FILTER(LANG(?itemLabel) = "en")
 }

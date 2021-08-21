@@ -29,10 +29,10 @@ jol = json.loads(s)
 items = {}
 labels = {}
 for d in jol:
-    dd = d.get('item')
-    it = dd.get('value')
-    lab = dd.get('label')
-    sup = d.get('super')
+    it = d.get('item')[31:]
+#    it = d.get('value')
+    lab = d.get('itemLabel')
+    sup = d.get('super')[31:]
     i = items.get(it)
     if i is not None:
         i.append(sup)
@@ -43,6 +43,7 @@ items['Q2393187'] = 'Q43460564'
 labels['Q2393187'] = 'molecular entity'
 labels['Q43460564'] = 'chemical entity'
 
+print('{} classes'.format(len(items.keys())))
 #print('Q415812' in set(items.keys()).union(set(['Q43460564'])))
 #print([it for it,itsuplist in items.items() if 'Q415812' in itsuplist ])
 

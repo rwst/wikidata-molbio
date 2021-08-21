@@ -4,6 +4,9 @@ from rdkit import Chem
 """
 Print tree of proper chemclasses
 """
+def is_compound(mol):
+    return len(Chem.FindPotentialStereo(mol)) == len(re.findall('@@?', Chem.MolToSmiles(mol)))
+
 # Initiate the parser
 parser = argparse.ArgumentParser()
 parser.add_argument("-q", "--query", help="perform SPARQL query",
@@ -19,13 +22,23 @@ args = parser.parse_args()
 
 # Check for --version or -V [] \,\$
 dontquery = not args.query
-pat = Chem.MolFromSmarts(args.pattern)
+#pat = Chem.MolFromSmarts(args.pattern)
 script = os.path.basename(sys.argv[0])[:-3]
+
 if args.ident:
-    idpat = Chem.MolFromSmiles(args.pattern)
-    idsm = Chem.MolToSmiles(idpat, isomericSmiles=False)
-    idstereo = len(Chem.FindPotentialStereo(idpat))
+    q = Chem.MolFromSmiles(args.pattern)
+    try:
+        idsm = Chem.MolToSmiles(q, isomericSmiles=False)
+    except Exception:
+        idsm = args.pattern
+    idstereo = len(Chem.FindPotentialStereo(q))
     print('{}'.format(idstereo))
+    ps = Chem.AdjustQueryParameters()
+    ps.adjustDegreeFlags = Chem.AdjustQueryWhichFlags.ADJUST_IGNOREDUMMIES
+    pat = Chem.AdjustQueryProperties(q, ps)
+else:
+    pat = Chem.MolFromSmarts(args.pattern)
+
 
 reader = csv.DictReader(open('smiles.tsv', 'r'), delimiter='\t')
 labels = {}
@@ -45,13 +58,18 @@ for d in reader:
 #        print(c)
     iturl = d.get('item')
     it = iturl[iturl.rfind('/')+1:]
+    inchi = None
     inchi = d.get('inchi')
     s = smiles.get(it)
+    mol = None
     if s is not None:
         mol = Chem.MolFromSmiles(s)
-    else:
+    elif inchi is not None:
         mol = Chem.MolFromInchi(inchi)
     if mol is None:
+        if it == 'Q425152':
+            print('======={} {} {}'.format(it, s, inchi))
+            exit()
         continue
     if args.ident:
         sm = Chem.MolToSmiles(mol, isomericSmiles=False)
@@ -61,7 +79,16 @@ for d in reader:
             nst = len(re.findall('@@?', ism))
             print('{} {} {}'.format(idstereo-nst, it, labels.get(it)))
         continue
-    hits = mol.GetSubstructMatches(pat)
+    #if it == 'Q425152':
+    #    print('======={} {} {}'.format(it, s, inchi))
+    #    print(Chem.MolToSmiles(mol))
+    #    print(smiles.get(it))
+    #    exit()
+    if mol.HasSubstructMatch(pat):
+        print('{} {}'.format(it, labels.get(it)))
+
+"""hits = mol.GetSubstructMatches(pat)
     if len(hits) > 3:
         if Chem.MolToSmiles(mol).count('C') == len(hits):
             print('{} {} {} {}'.format(it, labels.get(it), len(hits), Chem.MolToSmiles(mol).count('C')))
+            """
