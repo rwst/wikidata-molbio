@@ -34,21 +34,22 @@ reflist = jol.get('message').get('reference')
 print('references received: {}'.format(len(reflist)), file=sys.stderr)
 
 dois = {}
-print('reading dump data...', file=sys.stderr)
-file = open('DOI.ndjson')
-for line in file.readlines():
-    arr = json.loads(line.strip())
-    qit = arr[0]
-    doilist = arr[1]
-    if len(doilist) == 0:
-        continue
-    for doi in doilist:
-        doi = doi.upper()
-        d = dois.get(doi)
-        if d is not None:
-            #print('duplicate DOI {}'.format(doi), file=sys.stderr)
+if False:
+    print('reading dump data...', file=sys.stderr)
+    file = open('DOI.ndjson')
+    for line in file.readlines():
+        arr = json.loads(line.strip())
+        qit = arr[0]
+        doilist = arr[1]
+        if len(doilist) == 0:
             continue
-        dois[doi] = qit
+        for doi in doilist:
+            doi = doi.upper()
+            d = dois.get(doi)
+            if d is not None:
+                #print('duplicate DOI {}'.format(doi), file=sys.stderr)
+                continue
+            dois[doi] = qit
 
 P2860claims = []
 nodoi = 0
@@ -77,11 +78,12 @@ inp = ''
 while len(missing) > 0 and inp != 'y':
     print('querying {} missing DOIs'.format(len(missing)), file=sys.stderr)
     query="""
-    SELECT ?item ?doi
+    SELECT DISTINCT ?item ?doi
     WHERE
     {{
+      VALUES ?art {{ wd:Q580922 wd:Q13442814 }}
       VALUES ?doi {{ '{}' }}
-      ?item wdt:P31 wd:Q13442814.
+      ?item wdt:P31 ?art.
       ?item wdt:P356 ?doi.
     }}
     """.format("' '".join(missing))
