@@ -32,7 +32,7 @@ with open('{}.json'.format(script)) as file:
 
 blacklist = ['Q1057', 'Q2996394', 'Q211935', 'Q22279621', 'Q3346925', 'Q14819852',
         'Q14860489', 'Q2792936', 'Q6921783', 'Q14860372', 'Q13416689', 'Q22327418',
-        'Q5058355']
+        'Q5058355', 'Q82264', 'Q17155666']
 print('reading GO', file=sys.stderr)
 ont = pronto.Ontology('go-plus.owl')
 for d in jol:

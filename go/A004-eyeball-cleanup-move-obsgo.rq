@@ -1,0 +1,13 @@
+SELECT DISTINCT ?item ?itemLabel ?parent ?parentLabel
+WHERE 
+{
+  ?item wdt:P31 wd:Q93740491.
+  ?item rdfs:label ?itemLabel.
+  FILTER(lang(?itemLabel) = 'en').
+  OPTIONAL {
+    ?item wdt:P279 ?parent.
+    ?parent rdfs:label ?parentLabel.
+    FILTER(lang(?parentLabel) = 'en')
+  }
+}
+

@@ -1,4 +1,4 @@
-SELECT DISTINCT ?item ?title ?pmid ?pmcid ?doi ?protLabel ?rna ?rev ?omics ?autoi ?fusion ?glyc ?top ?foll
+SELECT DISTINCT ?item ?title ?pmid ?pmcid ?doi ?protLabel ?rna ?rev ?omics ?autoi ?fusion ?glyc ?top ?foll ?kerat
   (MIN(?pdate) AS ?pubdate)
 {
   VALUES ?pw { wd:Q82069695 }
@@ -35,6 +35,9 @@ SELECT DISTINCT ?item ?title ?pmid ?pmcid ?doi ?protLabel ?rna ?rev ?omics ?auto
     ?item ?autoi wd:Q8084905.
   }
   OPTIONAL { 
+    ?item ?kerat wd:Q14864159.
+  }
+  OPTIONAL { 
     ?item ?fusion wd:Q14865390.
   }
   OPTIONAL { 
@@ -47,5 +50,5 @@ SELECT DISTINCT ?item ?title ?pmid ?pmcid ?doi ?protLabel ?rna ?rev ?omics ?auto
   }
   SERVICE wikibase:label { bd:serviceParam wikibase:language "en" } .
 }
-GROUP BY ?item ?title ?pmid ?pmcid ?doi ?protLabel ?rna ?rev ?omics ?autoi ?fusion ?glyc ?top ?foll
+GROUP BY ?item ?title ?pmid ?pmcid ?doi ?protLabel ?rna ?rev ?omics ?autoi ?fusion ?glyc ?top ?foll ?kerat
 

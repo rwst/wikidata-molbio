@@ -2,6 +2,7 @@
 import pronto, six, csv, os, json, argparse, sys, datetime
 
 """
+wget http://purl.obolibrary.org/obo/go/extensions/go-plus.owl
 NOTE: DEPRECATION OF P686 NOT IMPLEMENTED. PROCEED MANUALLY.
 REMOVAL OF ALIASES NOT IMPLEMENTED.
 
@@ -33,7 +34,7 @@ args = parser.parse_args()
 QS = args.output_qs
 dontquery = not args.query
 script = os.path.basename(sys.argv[0])[:-3]
-GORELEASE = "Q135085"
+GORELEASE = "Q108147648"
 
 if dontquery is False:
     print('performing query...', file=sys.stderr)

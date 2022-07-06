@@ -3,10 +3,13 @@ import pronto, six, csv, os, json, argparse, sys, datetime
 
 """
 Uses eyeballed A004.txt. Cleans and moves all items chunkwise (CHUNKSIZE).
+TODO: NO CHECK IS DONE FOR TARGET ITEMS LINKING TO SOURCE ITEMS. MERGE WILL FAIL!
 """
-CHUNKSIZE = 10
+CHUNKSIZE = 7
 # Initiate the parser
 parser = argparse.ArgumentParser()
+parser.add_argument("-t", "--test", help="don't call wd",
+        action="store_true")
 
 # Read arguments from the command line
 args = parser.parse_args()
@@ -15,16 +18,16 @@ args = parser.parse_args()
 script = os.path.basename(sys.argv[0])[:-3]
 
 done = set()
+from_to = {}
 with open('A004.txt', 'r') as af:
     curr_chunk = 0
     d0 = []
     wd0 = []
-    d1 = []
     for line in af.readlines():
         d = line.rstrip().split('|')
         d0.append(d[0])
         wd0.append('wd:' + d[0])
-        d1.append(d[1])
+        from_to[d[0]] = d[1]
         curr_chunk = curr_chunk + 1
         if curr_chunk < CHUNKSIZE:
             continue
@@ -66,6 +69,8 @@ with open('A004.txt', 'r') as af:
             llangs = set()
             stmts = {}
             for p,v,l in items.get(it):
+                if p == 'P1366':
+                    from_to[it] = v
                 if p[:29] == 'http://www.wikidata.org/prop/':
                     s = stmts.get(p[29:])
                     if s is None:
@@ -107,21 +112,25 @@ with open('A004.txt', 'r') as af:
         f = open('{}.json1'.format(script), 'w')
         f.write(jj)
         f.close()
-        ret = os.popen('wd ee -bv -s del-manually-selected-obsolete-go-entities --no-exit-on-error <{}.json1'.format(script))
-        print(ret.read())
-        if ret.close() is not None:
-            print('ERROR')
+        if not args.test:
+            ret = os.popen('wd ee -bv -s del-manually-selected-obsolete-go-entities --no-exit-on-error <{}.json1'.format(script))
+            print(ret.read())
+            if ret.close() is not None:
+                print('ERROR')
 
         f = open('{}.mtxt'.format(script), 'w')
-        for (fr,to) in zip(d0, d1):
-            f.write('{} {}\n'.format(fr, to))
+        for fr in d0:
+            f.write('{} {}\n'.format(fr, from_to.get(fr)))
         f.close()
 
-        ret = os.popen('wd me -bv -s del-manually-selected-obsolete-go-entities --no-exit-on-error <{}.mtxt'.format(script))
-        print(ret.read())
-        if ret.close() is not None:
-            print('ERROR')
+        if not args.test:
+            ret = os.popen('wd me -bv -s del-manually-selected-obsolete-go-entities --no-exit-on-error <{}.mtxt'.format(script))
+            print(ret.read())
+            if ret.close() is not None:
+                print('ERROR')
+        else:
+            break
         curr_chunk = 0
         d0 = []
         wd0 = []
-        d1 = []
+

@@ -1,0 +1,6 @@
+
+SELECT ?prop ?val  (LANG(?val) AS ?lang)
+WHERE 
+{
+  wd:Q21097539 ?prop ?val.
+}

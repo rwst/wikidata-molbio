@@ -2,7 +2,7 @@
         SELECT ?it ?prop ?val  (LANG(?val) AS ?lang)
         WHERE 
         {
-          VALUES ?it { wd:Q22303782 wd:Q22303792 wd:Q22303793 wd:Q22303794 wd:Q22303795 wd:Q22303796 wd:Q22303797 wd:Q22303798 wd:Q22303799 wd:Q22303802 }
+          VALUES ?it { wd:Q34330049 wd:Q34330053 wd:Q34330254 wd:Q38258785 wd:Q38258786 wd:Q50350797 wd:Q50351592 }
           ?it ?prop ?val.
         }
         

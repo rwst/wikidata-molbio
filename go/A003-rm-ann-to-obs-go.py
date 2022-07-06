@@ -2,6 +2,7 @@
 import os, json, argparse, sys, datetime, time, csv
 
 """
+output claim-ids to remove, use with wd rc
 """
 # Initiate the parser
 parser = argparse.ArgumentParser()
@@ -19,7 +20,7 @@ dontquery = not args.query
 script = os.path.basename(sys.argv[0])[:-3]
 
 if dontquery is False:
-    print('performing query...')
+    print('performing query...', file=sys.stderr)
     ret = os.popen('wd sparql {}.rq >{}.json'.format(script, script))
     if ret.close() is not None:
         raise
