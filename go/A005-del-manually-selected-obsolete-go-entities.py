@@ -101,6 +101,8 @@ with open('A004.txt', 'r') as af:
                 j['labels'] = ll
             claims = {}
             for p in stmts.keys():
+                if p == 'P686':
+                    continue
                 c = []
                 for stmt in stmts.get(p):
                     c.append({ 'id': stmt, 'remove': True })

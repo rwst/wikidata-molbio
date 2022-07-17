@@ -1,10 +1,11 @@
-
 import pronto, six, csv, os, json, argparse, sys, datetime
 
 """
 Print list of obsolete item + possible nonobsolete superclasses.
 Chose best superclass, remove alternative lines.
 Result will be fed to A005 for automatic move.
+
+NOTE: do not merge items with WP/Commons links, other ext. identifiers (MeSH etc), check beforehand
 """
 def collect(parent_dir, it, the_set):
     if it not in parent_dir.keys():
@@ -48,6 +49,19 @@ for d in jol:
     l = labels.get(iv)
     if l is None:
         labels[iv] = il
+    p = d.get('repl')
+    if p is not None and len(p) > 0:
+        pv = p.get('value')
+        pl = p.get('label')
+        l = labels.get(pv)
+        if l is None:
+            labels[pv] = pl
+        p = parents.get(iv)
+        if p is None:
+            parents[iv] = set([pv])
+        else:
+            p.add(pv)
+        continue
     p = d.get('parent')
     if p is not None and len(p) > 0:
         pv = p.get('value')
@@ -60,6 +74,7 @@ for d in jol:
             parents[iv] = set([pv])
         else:
             p.add(pv)
+        continue
 
 l = []
 for o in parents.keys():

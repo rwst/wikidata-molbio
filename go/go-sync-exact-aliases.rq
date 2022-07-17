@@ -1,4 +1,4 @@
-SELECT DISTINCT ?p ?go ?al
+SELECT DISTINCT ?p ?go ?al ?lab
 {
    { ?p wdt:P31 wd:Q14860489 } UNION {
    ?p wdt:P31 wd:Q2996394 } UNION {
@@ -6,4 +6,6 @@ SELECT DISTINCT ?p ?go ?al
    ?p wdt:P686 ?go.
    ?p skos:altLabel ?al.
    FILTER (LANG(?al) = 'en')
+   ?p rdfs:label ?lab.
+   FILTER (LANG(?lab) = 'en')
 }

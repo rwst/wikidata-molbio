@@ -20,7 +20,7 @@ all links removed that point to them (see rm-ann-to-obs-go.py)
 
 # Initiate the parser
 parser = argparse.ArgumentParser()
-parser.add_argument("-s", "--output_qs", help="output to QS",
+parser.add_argument("-p", "--preview", help="",
         action="store_true")
 parser.add_argument("-q", "--query", help="perform SPARQL query",
         action="store_true")
@@ -31,10 +31,11 @@ parser.add_argument("-Q", "--query1", help="perform SPARQL query",
 args = parser.parse_args()
 
 # Check for --version or -V
-QS = args.output_qs
 dontquery = not args.query
 script = os.path.basename(sys.argv[0])[:-3]
-GORELEASE = "Q108147648"
+GORELEASE = "Q112968510"
+REASON = "P2241"
+DEPRECATED = "Q67125514"
 
 if dontquery is False:
     print('performing query...', file=sys.stderr)
@@ -80,6 +81,9 @@ for goid in goids.keys():
         continue
     obids.append(goid)
     obitems.append(goids.get(goid)[0])
+    if args.preview:
+        print("{} {} {}".format(goid, term.name, goids.get(goid)[0]))
+        continue
 
 als = {}
 if args.query1:
@@ -100,54 +104,46 @@ ndate = datetime.date.today().isoformat()
 newd = ndate + 'T00:00:00Z'
 for goid in obids:
     it,gostmt,exm,exstmt = goids.get(goid)
-    if QS:
-        print('{}|P31|Q93740491|S248|{}|S813|+{}/11'.format(it, GORELEASE, newd))
-        if exm is not None:
-            print('-{}|P2888|"{}"'.format(it, exm))
-        aldir = als.get(it)
-        if aldir is not None:
-            for lang,allist in aldir.items():
-                for al in allist:
-                    if al.startswith('GO:'):
-                        print('-{}|A{}|"{}"'.format(it, lang, al))
-    else:
-        aldir = als.get(it)
-        ald = {}
-        if aldir is not None:
-            for lang,allist in aldir.items():
-                for al in allist:
-                    if al.startswith('GO:'):
-                        ald[lang] = { "value":al, "remove":True }
-        claims = {
-                "P31": [ { "value": "Q93740491",
+    aldir = als.get(it)
+    ald = {}
+    if aldir is not None:
+        for lang,allist in aldir.items():
+            for al in allist:
+                if al.startswith('GO:'):
+                    ald[lang] = { "value":al, "remove":True }
+    claims = {
+            "P31": [ { "value": "Q93740491",
+                        "references": { "P248": GORELEASE,
+                            "P813": ndate }}],
+            "P686": [{"id":gostmt,
+                        "value": goid,
+                        "rank": "deprecated", 
+                        "qualifiers": { REASON: DEPRECATED }}],
+            }
+    term = ont.get(goid)
+    if term.replaced_by is not None:
+        P1366 = []
+        for t in term.replaced_by:
+            if goids.get(t.id) is not None:
+                P1366.append( { "value": goids.get(t.id)[0],
                                 "references": { "P248": GORELEASE,
-                                    "P813": ndate }}],
-                "P686": [{"id":gostmt, "remove":True}],
-                }
-        term = ont.get(goid)
-        if term.replaced_by is not None:
-            P1366 = []
-            for t in term.replaced_by:
-                if goids.get(t.id) is not None:
-                    P1366.append( { "value": goids.get(t.id)[0],
-                                    "references": { "P248": GORELEASE,
-                                        "P813": ndate }} )
-            if len(P1366) > 0:
-                claims["P1366"] = P1366
-        j = {"id": it,
-            "claims": claims }
+                                    "P813": ndate }} )
+        if len(P1366) > 0:
+            claims["P1366"] = P1366
+    j = {"id": it,
+        "claims": claims }
 #        if repl_id is not None:
 #            j.get('claims')['P1366'] = { "value": goids.get(repl_id)[0],
 #                                    "references": { "P248": "Q93741199",
 #                                       "P813": ndate }}
-        if exstmt is not None:
-            j.get('claims')['P2888'] = [{"id":exstmt, "remove":True}]
-        if len(ald) > 0:
-            j['aliases'] = ald
-        f = open('t.json', 'w')
-        f.write(json.dumps(j))
-        f.close()
-        print(json.dumps(j), flush=True)
+    if exstmt is not None:
+        j.get('claims')['P2888'] = [{"id":exstmt, "remove":True}]
+    if len(ald) > 0:
+        j['aliases'] = ald
+#    f = open('t.json', 'w')
+#    f.write(json.dumps(j))
+#    f.close()
+    print(json.dumps(j), flush=True)
 #        ret = os.popen('wd ee t.json --summary obsolete-gos')
 #        print(ret.read())
 #        if ret.close() is not None:

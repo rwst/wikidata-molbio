@@ -1,4 +1,4 @@
-SELECT DISTINCT ?item ?itemLabel ?parent ?parentLabel
+SELECT DISTINCT ?item ?itemLabel ?parent ?parentLabel ?repl ?replLabel
 WHERE 
 {
   ?item wdt:P31 wd:Q93740491.
@@ -8,6 +8,11 @@ WHERE
     ?item wdt:P279 ?parent.
     ?parent rdfs:label ?parentLabel.
     FILTER(lang(?parentLabel) = 'en')
+  }
+  OPTIONAL {
+    ?item wdt:P1366 ?repl.
+    ?repl rdfs:label ?replLabel.
+    FILTER(lang(?replLabel) = 'en')
   }
 }
 

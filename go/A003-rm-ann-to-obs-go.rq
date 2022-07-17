@@ -13,6 +13,16 @@ SELECT DISTINCT ?stmt
     ?item wdt:P682 ?upid.
     ?item p:P682 ?stmt.
     ?stmt ps:P682 ?upid
+  } UNION {
+    ?item wdt:P683 [].
+    ?item wdt:P361 ?upid.
+    ?item p:P361 ?stmt.
+    ?stmt ps:P361 ?upid
+  } UNION {
+    ?item wdt:P279 ?upid.
+    ?item p:P279 ?stmt.
+    ?stmt ps:P279 ?upid
   }
 }
+
 
