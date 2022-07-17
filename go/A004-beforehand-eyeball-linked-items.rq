@@ -1,0 +1,14 @@
+SELECT DISTINCT ?item ?itemLabel ?m ?sl
+WHERE
+{
+  ?item wdt:P31 wd:Q93740491.
+  ?item rdfs:label ?itemLabel.
+  FILTER(lang(?itemLabel) = 'en').
+  OPTIONAL {
+    ?item wikibase:sitelinks ?sl .
+  }
+  OPTIONAL {
+    ?item wdt:P486 ?m.
+  }
+}
+

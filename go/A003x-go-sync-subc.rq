@@ -1,0 +1,10 @@
+SELECT DISTINCT ?item ?goid ?stmt1 ?rank ?sgoid WHERE {
+  ?item wdt:P686 ?goid.
+  ?item wdt:P279 ?P279val.
+  ?item p:P279 ?stmt1.
+  ?stmt1 ps:P279 ?P279val.
+  ?P279val p:P686 ?gostmt.
+  ?gostmt ps:P686 ?sgoid.
+  ?gostmt wikibase:rank ?rank.
+}
+
