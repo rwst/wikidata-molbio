@@ -1,0 +1,4 @@
+SELECT DISTINCT ?item ?goid WHERE {
+  ?item wdt:P686 ?goid.
+}
+
