@@ -1,0 +1,8 @@
+SELECT ?stmt WHERE {
+  ?item wdt:P4732 ?goldbook.
+  bind(concat("10.1351/GOLDBOOK.",?goldbook) as ?doi)
+  ?item wdt:P356 ?doi.
+  ?item p:P356 ?stmt.
+  ?stmt ps:P356 ?doi.
+}
+

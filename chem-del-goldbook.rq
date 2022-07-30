@@ -1,0 +1,7 @@
+SELECT ?goodItem ?goodItemLabel ?badItem ?badItemLabel ?doi ?goldbook WHERE {
+  ?goodItem wdt:P4732 ?goldbook
+  bind(concat("10.1351/GOLDBOOK.",?goldbook) as ?doi)
+  ?badItem wdt:P356 ?doi
+  FILTER(?goodItem != ?badItem).
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}

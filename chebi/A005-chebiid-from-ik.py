@@ -20,11 +20,11 @@ script = os.path.basename(sys.argv[0])[:-3]
 MAPPING_TYPE = 'P4390'
 SKOS_EXACT = 'Q39893449'
 STATED_IN = 'P248'
-CHEBI_RELEASE = 'Q105965742'
-blacklist = ['Q26981430', 'Q623', 'Q1226']
+CHEBI_RELEASE = 'Q113292036'
+blacklist = ['Q26981430', 'Q623', 'Q1226', 'Q110177104']
 
 if dontquery is False:
-    print('performing query...')
+    print('performing query...', file=sys.stderr)
     ret = os.popen('wd sparql {}.rq1 >{}.json1'.format(script, script))
     if ret.close() is not None:
         raise
@@ -43,7 +43,7 @@ for d in jol:
         items[ik] = [it]
 
 if dontquery is False:
-    print('performing query...')
+    print('performing query...', file=sys.stderr)
     ret = os.popen('wd sparql {}.rq2 >{}.json2'.format(script, script))
     if ret.close() is not None:
         raise
@@ -66,6 +66,7 @@ for d in jol:
     else:
         chebis[it] = [chebi]
 
+print('reading ChEBI...', file=sys.stderr)
 ont = pronto.Ontology('chebi.obo')
 missing = 0
 for term in ont.terms():
@@ -90,8 +91,8 @@ for term in ont.terms():
         if chs is not None and ID in chs:
             # handled in other module
             continue
-        if term is tautomer:
-            don't add CHEBI
+#        if term is tautomer:
+#            don't add CHEBI
         j = {"id": it,
             "claims": {
                  "P683": { "value": ID,
@@ -101,5 +102,5 @@ for term in ont.terms():
                 }
         print(json.dumps(j), flush=True)
 
-#print('Missing: {}'.format(missing))
+print('Missing: {}'.format(missing), file=sys.stderr)
 

@@ -3,7 +3,7 @@ import os, json, argparse, sys, datetime, time
 
 """
 Add refs to stmts added in sync-rhea2go.
-Use with wd ac.
+Use with wd ar.
 """
 
 # Initiate the parser
