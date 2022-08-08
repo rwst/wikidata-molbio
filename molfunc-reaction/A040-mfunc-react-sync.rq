@@ -1,19 +1,21 @@
-SELECT DISTINCT ?exm ?chebi ?partof ?stmt1 ?stmt2
+SELECT DISTINCT ?item ?exm ?chebi ?partof ?stmt1 ?stmt2
 WHERE 
 {
   ?item wdt:P31 wd:Q14860489.
   ?item wdt:P2888 ?exm.
   FILTER(STRSTARTS(STR(?exm), 'https://www.rhea-db.org/rhea/'))
-  ?item p:P527 ?stmt1.
-  VALUES ?partof { wd:Q96483149 wd:Q96483162 }
-  ?stmt1 pq:P361 ?partof.
-  ?stmt1 ps:P527 ?obj.
   OPTIONAL { 
-             ?obj wdt:P683 ?chebi.
-           }
+    ?item p:P527 ?stmt1.
+    VALUES ?partof { wd:Q96483149 wd:Q96483162 }
+    ?stmt1 pq:P361 ?partof.
+    ?stmt1 ps:P527 ?obj.
+    OPTIONAL { 
+      ?obj wdt:P683 ?chebi.
+      }
+    }
   OPTIONAL { 
-            ?obj p:P361 ?stmt2.
-            ?stmt2 ps:P361 ?item.
-           }
+    ?obj p:P361 ?stmt2.
+    ?stmt2 ps:P361 ?item.
+    }
 }
 

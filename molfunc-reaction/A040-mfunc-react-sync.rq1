@@ -1,0 +1,9 @@
+SELECT DISTINCT ?item ?url
+WHERE 
+{
+  ?item wdt:P31 wd:Q14860489.
+  ?item wdt:P686 [].
+  ?item wdt:P2888 ?url.
+  FILTER(STRSTARTS(STR(?url), 'https://www.rhea-db.org/rhea/')).
+}
+

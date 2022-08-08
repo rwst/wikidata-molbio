@@ -1,0 +1,9 @@
+SELECT DISTINCT ?stmt
+{ 
+  ?item wdt:P683 ?chid.
+  ?item p:P361 ?stmt.
+  ?stmt ps:P361 ?obj.
+  ?stmt pq:P3831 ?srole.
+}
+
+

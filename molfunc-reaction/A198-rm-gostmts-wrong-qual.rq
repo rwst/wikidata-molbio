@@ -1,0 +1,13 @@
+SELECT DISTINCT ?stmt
+{ 
+  ?item wdt:P686 ?goid. 
+  OPTIONAL {
+    ?item p:P527 ?stmt.
+    ?stmt ps:P527 ?obj.
+    ?stmt pq:P2868 ?orole.
+    OPTIONAL {
+      ?stmt prov:wasDerivedFrom ?ref.
+    }
+  }
+}
+

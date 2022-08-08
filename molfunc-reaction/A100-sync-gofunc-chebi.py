@@ -6,11 +6,12 @@ import pronto, six, rdflib
 ftp://ftp.expasy.org/databases/rhea/rdf/rhea.rdf.gz
 Getting Rhea xrefs from GO functions, and adding reaction participants
 to GO function items
+We decided to not add transporter reactions; markup as cargo should be implemented
 Use stdout with wd ee.
 UPDATE RHDATE! (date of rhea2go.txt)
 TODO: collect all edits on one item
 """
-RHDATE = "2021-02-01T00:00:00Z"
+RHDATE = "2022-05-25T00:00:00Z"
 REF = { 'P854': 'http://geneontology.org/external2go/rhea2go', 'P813': RHDATE }
 
 # Initiate the parser
@@ -84,6 +85,7 @@ goits = {}
 stmts = {}
 exms = {}
 chdups = set()
+exdups = set()
 for d in jol:
     item = d.get('item')
     chid = d.get('chid')
@@ -100,12 +102,17 @@ for d in jol:
     else:
         goits[goid] = item
         exm = d.get('exm')
-        exms[goid] = exm[exm.rfind('/rhea/')+6:]
-    s = stmts.get(item)
+        e = exms.get(goid)
+        if e is not None:
+            exdups.add(goid)
+            continue
+        else:
+            exms[goid] = exm[exm.rfind('/rhea/')+6:]
     obj = d.get('obj')
     if obj is None:
         continue
     tup = (d.get('stmt'), d.get('side'))
+    s = stmts.get(item)
     if s is not None:
         if s.get(obj) is not None:
             if s.get(obj)[1] != tup[1]:
@@ -133,10 +140,10 @@ ignore = set(['GO:0050528', 'GO:0008800', 'GO:0047654', 'GO:0070330', 'GO:010306
     'GO:0000773', 'GO:0080101', 'GO:0008779', 'GO:0004608', 'GO:0004609', 'GO:0106245',
     'GO:0004307', 'GO:0106262', 'GO:0047637', 'GO:0047391', 'GO:0050018', 'GO:0047313',
     'GO:0008793', 'GO:0050131', 'GO:0047658', 'GO:0005253', 'GO:0004687', 'GO:0016829',
-    'GO:0042586'])
+    'GO:0042586', 'GO:0033787', 'GO:0015267'])
 
 for goid in goits.keys():
-    if goid in ignore:
+    if goid in ignore or goid in exdups:
         continue
     goit = goits.get(goid)
     if goit is None:
@@ -147,9 +154,10 @@ for goid in goits.keys():
     rhearef = 'RHEA:' + rhearef
     #print('query {}'.format(rhearef))
     qres = rhea.query("""PREFIX rh:<http://rdf.rhea-db.org/>
-SELECT DISTINCT ?item ?prset ?acc
+SELECT DISTINCT ?item ?prset ?acc ?transp
 WHERE {{
     ?item rh:accession '{}' .
+    ?item rh:isTransport ?transp .
     ?item rh:bidirectionalReaction ?breac .
     ?breac rh:substratesOrProducts ?prset .
     ?prset rh:contains ?partcp .
@@ -157,7 +165,7 @@ WHERE {{
     ?comp rh:accession ?acc
 }}""".format(rhearef))
     for row in qres:
-        if not str(row[2]).startswith('CHEBI:'):
+        if not str(row[2]).startswith('CHEBI:') or str(row[3]) == 'true':
             continue
         side = row[1][-1]
         sideq = 'Q96483149'
@@ -166,7 +174,7 @@ WHERE {{
         chebid = str(row[2])[6:]
         chit = chits.get(chebid)
         if chit is None:
-            print('missing: {} from {}'.format(chebid, rhearef))
+            print('missing: {} from {}'.format(chebid, rhearef), file=sys.stderr)
         else:
             if chit in chdups:
                 print('WARNING: {}'.format(chit), file=sys.stderr)

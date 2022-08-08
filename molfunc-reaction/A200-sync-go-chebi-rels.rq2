@@ -1,0 +1,13 @@
+SELECT DISTINCT ?item ?chid ?stmt ?obj ?ref ?srole
+{ 
+  ?item wdt:P683 ?chid.
+  OPTIONAL {
+    ?item p:P361 ?stmt.
+    ?stmt ps:P361 ?obj.
+    ?stmt pq:P2868 ?srole.
+    OPTIONAL {
+      ?stmt prov:wasDerivedFrom ?ref.
+    }
+  }
+}
+
