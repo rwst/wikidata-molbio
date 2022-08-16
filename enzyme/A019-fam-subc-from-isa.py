@@ -55,7 +55,7 @@ for d in jol:
     else:
         goids[goid] = (qit,[supit])
 
-ont = pronto.Ontology('/home/ralf/wikidata/go-plus.owl')
+ont = pronto.Ontology('/home/ralf/wikidata/go.obo')
 for goid in goids.keys():
     term = ont.get(goid)
     qit,supclaims = goids.get(goid)

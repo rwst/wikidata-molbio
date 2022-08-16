@@ -1,0 +1,16 @@
+SELECT DISTINCT ?func ?label
+{ 
+  ?func wdt:P31 wd:Q14860489.
+  ?func wdt:P686 ?goid.
+  ?item p:P680 ?stmt.
+  ?stmt ps:P680 ?func.
+  ?stmt pq:P4390 wd:Q39894595.
+
+  MINUS {
+    ?item2 p:P680 ?stmt2.
+    ?stmt2 ps:P680 ?func.
+    ?stmt2 pq:P4390 wd:Q39893449.
+  }
+  ?func rdfs:label ?label.
+  FILTER(LANG(?label) = 'en').
+}

@@ -3,14 +3,34 @@ import pronto, six, csv, os, json, argparse, sys, datetime, time
 import xml.etree.ElementTree as ET, gzip
 
 """
+UPDATE class-subclass.json before starting!
+
 For every family with referenced molfunc:
     - ignore fams with only narrow mappings
     - having one exact mapping makes fam exact
     - the rest are inexact fams
 Output all missing P279 claims. For exact fams, the superfams according to GO,
-for inexact fams, one P279 per broad molfunc. IFF they existi AND if it's not
-an InterPro subclass. Use with wd ee.
+for inexact fams, one P279 per broad molfunc. IFF they exist AND iff an existing
+P279 stmt isn't more specific (checked by loading the subclass tree). Use with wd ee.
 """
+# Walk reverse ontology subgraph (root = hitem) upwards, depth first.
+# Return True if citem is encountered (i.e. citem is superclass of hitem)
+def walk_find(sitems, hitem, citem):
+    try:
+        ch = sitems.get(hitem)
+        # print('{} {} {}'.format(hitem, citem, ch))
+        if ch is None:
+            return False
+        if citem in ch:
+            return True
+        for c in ch:
+            if walk_find(sitems, c, citem):
+                return True
+        return False
+    except RecursionError:
+        print((hitem, citem))
+        raise
+
 # Initiate the parser
 parser = argparse.ArgumentParser()
 parser.add_argument("-q", "--query", help="perform SPARQL query",
@@ -64,6 +84,8 @@ for d in jol:
             print('{}: {} {}'.format(it, ipr, i))
             raise
 
+#print(exgoids.get("GO:0004459"), file=sys.stderr)
+
 narrow_only = set()
 for it,flist in funcs.items():
     if all([mtype == 'Q39893967' for goid,mtype in flist]):
@@ -92,16 +114,32 @@ for d in jol:
     else:
         s.append(sup)
 
-print('reading InterPro', file=sys.stderr)
-input = gzip.open('interpro.xml.gz')                                   
-tree = ET.parse(input)
-root = tree.getroot() 
-its = {}
-for child in root:
-    if child.tag == 'interpro':
-        its[child.attrib.get('id')] = child
- 
-ont = pronto.Ontology('/home/ralf/wikidata/go-plus.owl')
+childs = {}
+sitems = {}
+# filling subclass structure
+with open('class-subclass.json', 'r') as f:
+    print('reading superclass data', file=sys.stderr)
+    s = f.read()
+    jol = json.loads(s)
+
+for d in jol:
+    it = d.get('item')
+    sup = d.get('super')
+    i = sitems.get(it)
+    if i is not None:
+        i.append(sup)
+    else:
+        sitems[it] = [sup]
+    c = childs.get(sup)
+    if c is not None:
+        c.append(it)
+    else:
+        childs[sup] = [it]
+
+#print(walk_find(sitems, 'Q24721492', 'Q409464'))
+#print(walk_find(sitems, 'Q409464', 'Q24721492'))
+
+ont = pronto.Ontology('/home/ralf/wikidata/go.obo')
 for it,flist in funcs.items():
     if it in narrow_only:
         continue
@@ -110,7 +148,8 @@ for it,flist in funcs.items():
         term = ont.get(goid)
         for supterm in term.superclasses(distance=1, with_self=False):
             supit = exgoids.get(supterm.id)
-            if supit is None or supit in sups.get(it):
+            if supit is None or supit in sups.get(it)\
+            or walk_find(sitems, it, supit):
                 continue
             j = {"id": it,
                  "claims": {
@@ -121,19 +160,14 @@ for it,flist in funcs.items():
                 }
             print(json.dumps(j), flush=True)
     else:
-        nipr = iprs.get(it)
-        if nipr is not None:
-            entry = its.get(nipr)
-            if entry is None:
-                print('not found: {}'.format(nipr), file=sys.stderr)
-                exit()
-            if any([ch.tag == 'parent_list' for ch in entry]):
-                continue
         for goid,mtype in flist:
+            #if it == "Q24721492":
+            #    print((goid,mtype), file=sys.stderr)
             if mtype == SKOS_BROAD:
-                term = ont.get(goid)
+                #term = ont.get(goid)
                 supit = exgoids.get(goid)
-                if supit is None or supit in sups.get(it):
+                if supit is None or supit in sups.get(it)\
+                or walk_find(sitems, it, supit):
                     continue
                 j = {"id": it,
                      "claims": {

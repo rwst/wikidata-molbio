@@ -1,10 +1,11 @@
-SELECT DISTINCT ?item ?goid ?stmt1 ?rank ?sgoid WHERE {
+SELECT DISTINCT ?item ?goid ?stmt1 ?sgoid WHERE {
+hint:Query hint:optimizer "None".
   ?item wdt:P686 ?goid.
-  ?item wdt:P279 ?P279val.
-  ?item p:P279 ?stmt1.
-  ?stmt1 ps:P279 ?P279val.
-  ?P279val p:P686 ?gostmt.
-  ?gostmt ps:P686 ?sgoid.
-  ?gostmt wikibase:rank ?rank.
+  OPTIONAL {
+      ?item p:P279 ?stmt1.
+      ?stmt1 ps:P279 ?P279val.
+      ?stmt1 a wikibase:BestRank .
+      ?P279val wdt:P686 ?sgoid.
+  }
 }
 

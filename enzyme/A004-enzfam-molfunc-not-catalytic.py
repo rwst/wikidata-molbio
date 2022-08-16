@@ -4,6 +4,8 @@ import csv, os, json, argparse, sys
 """
 Two queries are used to get and show all enzfams that have molfuncs but no catalytic molfuncs.
 Should only give Q2449730 transport protein.
+
+Alternatively use the A004a query.
 """
 # Initiate the parser
 parser = argparse.ArgumentParser()

@@ -1,0 +1,8 @@
+SELECT DISTINCT ?item ?super
+WHERE
+{
+  VALUES ?class { wd:Q67015883 wd:Q417841 wd:Q67101749 wd:Q81505329 wd:Q7251477 }
+  ?item wdt:P31 ?class.
+  ?item wdt:P279 ?super.
+}
+

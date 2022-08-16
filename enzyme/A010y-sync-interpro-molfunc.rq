@@ -1,8 +1,10 @@
-SELECT DISTINCT ?item ?ipr ?goid ?prop
-{  
+SELECT DISTINCT ?item ?ipr ?goid ?stmt ?prop
+{
   ?item wdt:P2926 ?ipr.
   OPTIONAL {
-    ?item wdt:P680 ?func.
+    ?item p:P680 ?stmt.
+    ?stmt ps:P680 ?func.
+    ?stmt a wikibase:BestRank .
     ?func wdt:P686 ?goid
   }
   OPTIONAL {

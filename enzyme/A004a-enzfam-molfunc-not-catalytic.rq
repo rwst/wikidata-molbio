@@ -1,0 +1,18 @@
+SELECT DISTINCT ?item WHERE {
+#  hint:Query hint:optimizer "None".
+  ?item wdt:P31 wd:Q67015883.
+  MINUS {
+    ?item wdt:P680 ?func.
+    ?func wdt:P31 wd:Q14860489.
+    ?func wdt:P279/wdt:P279* wd:Q82264.
+   }
+  MINUS {
+    ?item wdt:P680 ?func.
+    ?func wdt:P31 wd:Q14860489.
+    ?func wdt:P279/wdt:P279* wd:Q14876109.
+   }
+  MINUS {
+    ?item wdt:P680 wd:Q82264
+   }
+}
+

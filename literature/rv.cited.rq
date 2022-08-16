@@ -1,0 +1,15 @@
+SELECT DISTINCT ?ref ?refLabel ?date
+{ 
+  VALUES ?pw { wd:Q164778 }
+  VALUES ?top { wd:Q7202 wd:Q128406 wd:Q908902 }
+  ?item p:P921 [ ps:P921 ?pw].
+  ?item p:P921 [ ps:P921 ?top].
+  ?item wdt:P2860 ?ref.
+  MINUS { ?ref wdt:P921 wd:Q7202 }
+  MINUS { ?ref wdt:P921 wd:Q128406 }
+  MINUS { ?ref wdt:P921 wd:Q128570 }
+  MINUS { ?ref wdt:P921 wd:Q908902 }
+  ?ref rdfs:label ?refLabel.
+  FILTER(LANG(?refLabel) = 'en').
+  ?ref wdt:P577 ?date.
+}

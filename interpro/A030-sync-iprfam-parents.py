@@ -4,6 +4,8 @@ import xml.etree.ElementTree as ET, gzip
 """
 Loads all families with IPR and either adds missing IPR parents or removes IPR superclasses
 that are no longer supported by IPR. Checks also for duplicate IPR.
+
+Note: --rm is unusable as long as there are mixed enzfam/iprfam superclasses
 """
 # Initiate the parser
 parser = argparse.ArgumentParser()

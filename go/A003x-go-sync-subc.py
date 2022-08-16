@@ -2,7 +2,8 @@
 import pronto, six, csv, os, json, argparse, sys, datetime
 
 """
-wget http://purl.obolibrary.org/obo/go/extensions/go-plus.owl
+Use -c to check if the pronto version combined with your env can
+see "is a" relationships.
 
 On current GO items remove P279 claims pointing to obsoleted GOs.
 Also, remove erroneous P279 claims to current GO items.
@@ -10,10 +11,9 @@ Use with wd rc.
 
 Option -a adds missing P279. Use with wd ee.
 """
-
 # Initiate the parser
 parser = argparse.ArgumentParser()
-parser.add_argument("-p", "--preview", help="",
+parser.add_argument("-c", "--check", help="",
         action="store_true")
 parser.add_argument("-q", "--query", help="perform SPARQL query",
         action="store_true")
@@ -29,6 +29,19 @@ dontadd = not args.add
 script = os.path.basename(sys.argv[0])[:-3]
 GORELEASE = "Q112968510"
 
+if args.check:
+    ont = pronto.Ontology('/home/ralf/wikidata/go.obo')
+    term = ont.get("GO:0017057")
+    print(list(term.relationships.keys()))
+    subs = []
+    for r in term.relationships.keys():
+        if r.name == 'is a':
+            tset = term.relationships.get(r)
+            for t in tset:
+                subs.append(t.id)
+    print(subs)
+    exit(0)
+
 if dontquery is False:
     print('performing query...', file=sys.stderr)
     ret = os.popen('wd sparql {}.rq >{}.json'.format(script, script))
@@ -41,40 +54,34 @@ with open('{}.json'.format(script)) as file:
 
 its = {}
 goids = {}
-validits = set()
-deprcits = set()
+stmts = set()
 for d in jol:
     item = d.get('item')
     goid = d.get('goid')
     stmt = d.get('stmt1')
-    if stmt is None:
-        print("null stmt: {}".format(item))
-        exit(0)
     sgoid = d.get('sgoid')
-    rank = d.get('rank')
-    if rank != 'http://wikiba.se/ontology#DeprecatedRank':
-        validits.add(stmt)
+    stmts.add(stmt)
     it = its.get(goid)
     if it is None:
         its[goid] = item
     git = goids.get(goid)
     if git is None:
-        goids[goid] = [(stmt,sgoid)]
+        goids[goid] = {(stmt,sgoid)}
     else:
-        goids[goid].append((stmt,sgoid))
+        git.add((stmt,sgoid))
 
-if dontadd:
-    for d in jol:
-        stmt = d.get('stmt1')
-        if not stmt in validits:
-            print(stmt)
+#if dontadd:
+#    for s in stmts.difference(validits):
+#        print(stmt)
 
 ndate = datetime.date.today().isoformat()
 newd = ndate + 'T00:00:00Z'
 print('reading GO', file=sys.stderr)
-ont = pronto.Ontology('go-plus.owl')
+ont = pronto.Ontology('/home/ralf/wikidata/go.owl')
 for goid in goids.keys():
     term = ont.get(goid)
+    #print(goid)
+    #print(list(term.relationships.keys()))
     if term is None or term.obsolete is True:
         continue
     
@@ -84,10 +91,17 @@ for goid in goids.keys():
             tset = term.relationships.get(r)
             for t in tset:
                 subs.append(t.id)
+    #print(subs)
     if dontadd:
-        for stmt,sgoid in goids.get(goid):
-            if not sgoid in subs:
-                print(stmt)
+        gset = goids.get(goid)
+        if gset is not None:
+            try:
+                for stmt,sgoid in gset:
+                    if not sgoid in subs:
+                        print(stmt)
+            except ValueError:
+                print(gset)
+                raise
     else:
         cl = []
         for sub in subs:

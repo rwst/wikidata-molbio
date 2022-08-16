@@ -122,6 +122,8 @@ for nipr in qits.keys():
                         if id in g:
                             g.remove(id)
                 for goid in g:
+                    #print((nipr,goid))
+                    #print(qits.get(nipr))
                     print(stmts.get((qits.get(nipr), goid)))
     else:
         for ch in entry:
