@@ -8,7 +8,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-q", "--query", help="perform SPARQL query",
         action="store_true")
 parser.add_argument("-t", "--topic", help="base name", required=True)
-parser.add_argument("-w", "--write", help="write new dead items if set", action="store_true")
+parser.add_argument("-w", "--write", help="write new dead DOIs if set", action="store_true")
 
 # Read arguments from the command line
 args = parser.parse_args()
@@ -20,14 +20,14 @@ script = os.path.basename(sys.argv[0])[:-3]
 topic = args.topic
 dowrite = args.write
 
-deaditems = set()
+deaddois = set()
 try:
-    with open('{}.deaditems.txt'.format(topic)) as file:
+    with open('{}.deaddois.txt'.format(topic)) as file:
         for line in file.readlines():
             line = line.rstrip()
-            deaditems.add(line)
+            deaddois.add(line)
 except FileNotFoundError:
-    print('WARNING: empty database')
+    print('WARNING: empty database', file=sys.stderr)
 
 if dontquery is False:
     print('performing query...')
@@ -38,18 +38,19 @@ file = open('{}.cited.json'.format(topic))
 s = file.read()
 jol = json.loads(s)
 
-newdeaditems = set()
+newdeaddois = set()
 items = []
 for d in jol:
     ref = d.get('ref')
     value = ref.get('value')
-    if value in deaditems:
+    doi = d.get('doi')
+    if doi is None or doi in deaddois:
         continue
     items.append((value, ref.get('label'), d.get('date')[0:10]))
-    newdeaditems.add(value)
+    newdeaddois.add(doi)
 
 if dowrite:
-    for it in sorted(deaditems.union(newdeaditems)):
+    for it in sorted(deaddois.union(newdeaddois)):
         print(it)
 else:
     for tup in sorted(items, key=lambda item: item[2]):

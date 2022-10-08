@@ -202,4 +202,7 @@ for p in prots:
         gc.collect()
         csvfile.close()
 
-print(len(prots))
+alldata = set()
+for v in data.values():
+    alldata = alldata.union(v)
+print(len(alldata))
