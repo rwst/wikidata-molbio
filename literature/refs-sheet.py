@@ -129,7 +129,7 @@ for item in jol:
     if prot == 'replication/transcription complex':
         prot = 'RTC'
     # exclusive topics
-    for topic in ['fusion', 'glyc', 'entry']:
+    for topic in ['asmbl', 'repl', 'entry']:
         if Len(item.get(topic)) > 0:
             is_added = True
             add_to_slot(topic,data,title,pdate,pmid,pmcid,doi,foll,rev)

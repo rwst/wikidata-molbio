@@ -1,0 +1,15 @@
+SELECT DISTINCT ?stmt
+WHERE 
+{
+  VALUES ?top { wd:Q7202 wd:Q128406 wd:Q908902 }
+  ?item wdt:P921 wd:Q82069695.
+  ?item wdt:P921 ?top.
+  ?ìtem wdt:P921 ?prot.
+  ?prot wdt:P703 wd:Q82069695.
+  ?item p:P921 ?stmt.
+  ?stmt ps:P921 ?prot.
+  MINUS {
+    ?stmt prov:wasDerivedFrom ?refnode.
+    }
+}
+

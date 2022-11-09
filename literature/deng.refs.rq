@@ -1,0 +1,70 @@
+SELECT DISTINCT ?item ?title ?pmid ?pmcid ?doi ?protLabel ?rna ?rev ?omics ?autoi ?asmbl ?repl ?top ?foll ?kerat ?entry
+  (MIN(?pdate) AS ?pubdate)
+{
+  VALUES ?pw { wd:Q476209 }
+  VALUES ?top { wd:Q7202 wd:Q128406 wd:Q908902 }
+  ?item p:P921 [ ps:P921 ?pw].
+  ?item p:P921 [ ps:P921 ?top].
+  MINUS { ?item wdt:P921 wd:Q177005 }
+  ?item wdt:P1476 ?title.
+  ?item wdt:P577 ?pdate.
+  OPTIONAL { 
+    VALUES ?prot { wd:Q114697650 wd:Q114697797 wd:Q114697902 wd:Q114697989 wd:Q114698132 wd:Q114698247 wd:Q114698350 wd:Q114698466 wd:Q114698575 wd:Q114698643 wd:Q114733409 }
+    ?item wdt:P921 ?prot.
+    BIND(
+      IF(?prot = wd:Q114697650, 'C',
+      IF(?prot = wd:Q114697797, 'E',
+      IF(?prot = wd:Q114697902, 'prM',
+      IF(?prot = wd:Q114697989, 'NS1',
+      IF(?prot = wd:Q114698132, 'NS2A',
+      IF(?prot = wd:Q114698247, 'NS2B',
+      IF(?prot = wd:Q114733409, 'NS2B3',
+      IF(?prot = wd:Q114698350, 'NS3',
+      IF(?prot = wd:Q114698466, 'NS4A',
+      IF(?prot = wd:Q114698575, 'NS4B',
+      IF(?prot = wd:Q114698643, 'NS5',
+        'unknown')))))))))))
+      as ?protLabel)
+  }
+  OPTIONAL { 
+    ?item wdt:P698 ?pmid.
+  }
+  OPTIONAL { 
+    ?item wdt:P932 ?pmcid.
+  }
+  OPTIONAL { 
+    ?item wdt:P356 ?doi.
+  }
+  OPTIONAL { 
+    ?item ?rna wd:Q11053.
+  }
+  OPTIONAL { 
+    ?item ?rev wd:Q7318358.
+  }
+  OPTIONAL { 
+    VALUES ?omic { wd:Q471857 wd:Q28946449 wd:Q1098876 wd:Q106472333 wd:Q3589153 wd:Q105406038 }
+    ?item ?omics ?omic.
+  }
+  OPTIONAL { 
+    ?item ?autoi wd:Q8084905.
+  }
+  OPTIONAL { 
+    ?item ?kerat wd:Q14864159.
+  }
+  OPTIONAL { 
+    ?item ?asmbl wd:Q14916420.
+  }
+  OPTIONAL { 
+    ?item ?repl wd:Q3933202.
+  }
+  OPTIONAL { 
+    ?item ?entry wd:Q4118894.
+  }
+  OPTIONAL { 
+    ?item wdt:P31 wd:Q580922.
+    ?item wdt:P156 ?fitem.
+    ?fitem wdt:P356 ?foll.
+  }
+}
+GROUP BY ?item ?title ?pmid ?pmcid ?doi ?protLabel ?rna ?rev ?omics ?autoi ?asmbl ?repl ?top ?foll ?kerat ?entry
+

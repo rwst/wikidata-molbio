@@ -1,7 +1,7 @@
 SELECT ?item ?doi
 WHERE 
 {
-  VALUES ?art { wd:Q580922 wd:Q13442814 }
+  VALUES ?art { wd:Q580922 wd:Q13442814 wd:Q1348305 }
   VALUES ?topic { wd:Q908902 wd:Q7202 } 
   ?item wdt:P31 ?art.
   ?item p:P921 [ ps:P921 ?topic; pq:P642 wd:Q82069695 ].

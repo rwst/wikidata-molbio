@@ -7,12 +7,16 @@ Reads existing aannotated papers from WD (like refs-sheet.py), collects unique D
 and queries S2 to get all DOIs citing these DOIs, and which are neither members of the input
 DOI set, nor of the deaditem set.
 
-Output goes to stdout listing DOI + title, for later eyeballing. Negative choices need to go
-into the deaddois list. Merge deaditems and deaddois?
+Output goes to stdout listing DOI + title, for later eyeballing. The (filtered) list of DOIs
+needs to be appended to the deaddois list like
+sed 's/ \([^ ]*\) .*/\1/g' deng.citations.txt >>deng.deaddois.txt
 
-It could also be beneficial to create output files for creating new papers and their references.
-However, number of item creations will be minimized by abovementioned eyeballing.
-After creation there should be a list of created items for quick annotation.
+We do not memorize those papers that we have queried at S2 for citing papers, because the
+time we need for full query is less than 1 hour.
+
+To create output files for eyeballing after topic filtering use like
+python3 wdlist-from-s2list.py deng.citations.txt
+New items will not be many to create so is left for manual.
 """
 
 def Len(obj):

@@ -1,6 +1,6 @@
-SELECT DISTINCT ?ref ?doi ?refLabel ?date
-{ 
-  VALUES ?pw { wd:Q164778 }
+SELECT DISTINCT ?ref ?refLabel ?date
+{
+  VALUES ?pw { wd:Q85438966 }
   VALUES ?top { wd:Q7202 wd:Q128406 wd:Q908902 }
   ?item p:P921 [ ps:P921 ?pw].
   ?item p:P921 [ ps:P921 ?top].
@@ -9,8 +9,9 @@ SELECT DISTINCT ?ref ?doi ?refLabel ?date
   MINUS { ?ref wdt:P921 wd:Q128406 }
   MINUS { ?ref wdt:P921 wd:Q128570 }
   MINUS { ?ref wdt:P921 wd:Q908902 }
-  ?ref wdt:P356 ?doi.
+  MINUS { ?ref wdt:P921 wd:Q6926073 }
+  MINUS { ?ref wdt:P921 wd:Q88161067 }
   ?ref rdfs:label ?refLabel.
-  FILTER(LANG(?refLabel) = 'en' && CONTAINS(?refLabel, 'otavir')).
+  FILTER(LANG(?refLabel) = 'en' && (CONTAINS(STR(?refLabel), 'SARS')|| CONTAINS(STR(?refLabel), 'severe'))).
   ?ref wdt:P577 ?date.
 }

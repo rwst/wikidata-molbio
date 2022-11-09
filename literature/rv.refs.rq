@@ -1,4 +1,4 @@
-SELECT DISTINCT ?item ?title ?pmid ?pmcid ?doi ?protLabel ?rna ?rev ?omics ?autoi ?fusion ?glyc ?top ?foll ?kerat ?entry ?uses
+SELECT DISTINCT ?item ?title ?pmid ?pmcid ?doi ?protLabel ?rna ?rev ?omics ?autoi ?asmbl ?repl ?top ?foll ?kerat ?entry ?uses
   (MIN(?pdate) AS ?pubdate)
 {
   VALUES ?pw { wd:Q164778 }
@@ -52,10 +52,10 @@ SELECT DISTINCT ?item ?title ?pmid ?pmcid ?doi ?protLabel ?rna ?rev ?omics ?auto
     ?item ?kerat wd:Q14864159.
   }
   OPTIONAL { 
-    ?item ?fusion wd:Q14865390.
+    ?item ?asmbl wd:Q14916420.
   }
   OPTIONAL { 
-    ?item ?glyc wd:Q14839643.
+    ?item ?repl wd:Q3933202.
   }
   OPTIONAL { 
     ?item ?entry wd:Q4118894.
@@ -69,4 +69,4 @@ SELECT DISTINCT ?item ?title ?pmid ?pmcid ?doi ?protLabel ?rna ?rev ?omics ?auto
     ?item wdt:P4510 ?uses.
   }
 }
-GROUP BY ?item ?title ?pmid ?pmcid ?doi ?protLabel ?rna ?rev ?omics ?autoi ?fusion ?glyc ?top ?foll ?kerat ?entry ?uses
+GROUP BY ?item ?title ?pmid ?pmcid ?doi ?protLabel ?rna ?rev ?omics ?autoi ?asmbl ?repl ?top ?foll ?kerat ?entry ?uses
