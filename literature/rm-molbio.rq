@@ -1,0 +1,8 @@
+SELECT DISTINCT ?s
+{
+  VALUES ?pw { wd:Q82069695 }
+  ?item p:P921 [ ps:P921 ?pw].
+  ?item p:P921 ?s.
+  ?s ps:P921 wd:Q7202
+}
+

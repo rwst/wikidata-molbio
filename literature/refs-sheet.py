@@ -97,6 +97,9 @@ jol = json.loads(s)
 prots = set()
 data = dict()
 human_dois = set()
+topics = { 'Q128406': 'pharm', 'Q4118894': 'entry' , 'Q3933202': 'repl',
+	'Q14916420': 'asmbly', 'Q27108123': 'rna' ,'Q898362': 'ptm', 'Q14818042': 'v-h',
+        'Q22244941': 'h-v' }
 human_strains = ['Q112246336', 'Q112252986', 'Q112242465', 'Q112252639', 'Q112252484', 'Q112703025', 'Q112252774', 'Q113396346', 'Q113457173', 'Q113468985', 'Q113531324', 'Q113531390', 'Q113531550', 'Q113531739']
 strains = {}
 for item in jol:
@@ -110,9 +113,8 @@ for item in jol:
     pmcid = item.get('pmcid')
     doi = item.get('doi')
     foll = item.get('foll')
-    rev = item.get('rev')
-    entry = item.get('entry')
     uses = item.get('uses')
+    rev = item.get('rev')
     if uses in human_strains:
         human_dois.add(doi)
     s = strains.get(doi)
@@ -129,30 +131,34 @@ for item in jol:
     if prot == 'replication/transcription complex':
         prot = 'RTC'
     # exclusive topics
-    for topic in ['asmbl', 'repl', 'entry']:
-        if Len(item.get(topic)) > 0:
-            is_added = True
-            add_to_slot(topic,data,title,pdate,pmid,pmcid,doi,foll,rev)
-            prots.add(topic)
+    top = item.get('top')
+    topic = topics.get(top)
+    if topic in ['asmbly', 'repl', 'entry', 'v-h', 'h-v']:
+        is_added = True
+        add_to_slot(topic,data,title,pdate,pmid,pmcid,doi,foll,rev)
+        prots.add(topic)
     if not is_added and Len(prot) > 0:
         is_added = True
         prots.add(prot)
         add_to_slot(prot,data,title,pdate,pmid,pmcid,doi,foll,rev)
     # inclusive topics
-    for topic in ['autoi', 'omics', 'rna', 'rev', 'kerat']:
-        if Len(item.get(topic)) > 0:
-            is_added = True
-            add_to_slot(topic,data,title,pdate,pmid,pmcid,doi,foll,rev)
-            prots.add(topic)
-    if item.get('top') == 'Q128406':
+    if topic in ['rna', 'ptm']:
+        is_added = True
+        add_to_slot(topic,data,title,pdate,pmid,pmcid,doi,foll,rev)
+        prots.add(topic)
+    if topic == 'pharm':
         is_added = True
         prot = 'drugs'
         prots.add(prot)
         add_to_slot(prot,data,title,pdate,pmid,pmcid,doi,foll,rev)
-    if not is_added and item.get('top') == 'Q7202':
-        prot = 'Misc'
+    if Len(rev) > 0:
+        is_added = True
+        prot = 'rev'
         prots.add(prot)
         add_to_slot(prot,data,title,pdate,pmid,pmcid,doi,foll,rev)
+    if not is_added and topics.get(topic) == 'strbio':
+        prots.add('Misc')
+        add_to_slot('Misc',data,title,pdate,pmid,pmcid,doi,foll,rev)
 
 ret = os.popen('rm -f refs-*.csv')
 

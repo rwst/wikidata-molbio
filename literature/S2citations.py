@@ -7,8 +7,8 @@ Reads existing aannotated papers from WD (like refs-sheet.py), collects unique D
 and queries S2 to get all DOIs citing these DOIs, and which are neither members of the input
 DOI set, nor of the deaditem set.
 
-Output goes to stdout listing DOI + title, for later eyeballing. The (filtered) list of DOIs
-needs to be appended to the deaddois list like
+Output goes to S2citations.out listing DOI + title, for later filtering and eyeballing.
+The list of DOIs needs to be appended to the deaddois list like
 sed 's/ \([^ ]*\) .*/\1/g' deng.citations.txt >>deng.deaddois.txt
 
 We do not memorize those papers that we have queried at S2 for citing papers, because the

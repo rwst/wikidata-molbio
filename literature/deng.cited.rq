@@ -1,17 +1,17 @@
 SELECT DISTINCT ?ref ?doi ?refLabel ?date
 { 
   VALUES ?pw { wd:Q476209 }
-  VALUES ?top { wd:Q7202 wd:Q128406 wd:Q908902 }
+  VALUES ?top { wd:Q128406 wd:Q908902 wd:Q4118894 wd:Q3933202 wd:Q14916420 wd:Q27108123 wd:Q898362 wd:Q14818042 wd:Q22244941 wd:Q11053 wd:Q114697650 wd:Q114697797 wd:Q114697902 wd:Q114697989 wd:Q114698132 wd:Q114698247 wd:Q114698350 wd:Q114698466 wd:Q114698575 wd:Q114698643 wd:Q114733409 }
   ?item p:P921 [ ps:P921 ?pw].
   ?item p:P921 [ ps:P921 ?top].
   ?item wdt:P2860 ?ref.
-  MINUS { ?ref wdt:P921 wd:Q7202 }
-  MINUS { ?ref wdt:P921 wd:Q128406 }
+  MINUS { 
+  VALUES ?t { wd:Q128406 wd:Q908902 wd:Q4118894 wd:Q3933202 wd:Q14916420 wd:Q27108123 wd:Q898362 wd:Q14818042 wd:Q22244941 wd:Q11053 wd:Q114697650 wd:Q114697797 wd:Q114697902 wd:Q114697989 wd:Q114698132 wd:Q114698247 wd:Q114698350 wd:Q114698466 wd:Q114698575 wd:Q114698643 wd:Q114733409 }
+    ?ref wdt:P921 ?t 
+  }
   MINUS { ?ref wdt:P921 wd:Q128570 }
-  MINUS { ?ref wdt:P921 wd:Q177005 }
-  MINUS { ?ref wdt:P921 wd:Q908902 }
   ?ref wdt:P356 ?doi.
   ?ref rdfs:label ?refLabel.
-  FILTER(LANG(?refLabel) = 'en' && (CONTAINS(?refLabel, 'engue') || CONTAINS(?refLabel, 'DENV') || CONTAINS(?refLabel, 'lavivi'))).
+  FILTER(LANG(?refLabel) = 'en' && (CONTAINS(?refLabel, 'DENV') || CONTAINS(?refLabel, 'engue') || CONTAINS(?refLabel, 'lavivir'))).
   ?ref wdt:P577 ?date.
 }

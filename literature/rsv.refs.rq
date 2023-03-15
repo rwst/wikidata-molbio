@@ -1,0 +1,48 @@
+SELECT DISTINCT ?item ?title ?pmid ?pmcid ?doi ?protLabel ?rev ?top
+  (MIN(?pdate) AS ?pubdate)
+{
+  VALUES ?pw { wd:Q1052913 }
+  ?item p:P921 [ ps:P921 ?pw].
+  OPTIONAL {
+      VALUES ?top { wd:Q128406 wd:Q908902 wd:Q4118894 wd:Q3933202 wd:Q14916420 wd:Q27108123 wd:Q898362 wd:Q14818042 wd:Q22244941 wd:Q11053 }
+    ?item p:P921 [ ps:P921 ?top].
+  }
+  ?item wdt:P1476 ?title.
+  ?item wdt:P577 ?pdate.
+  OPTIONAL { 
+    VALUES ?prot { wd:Q24784703 wd:Q115694203 wd:Q24769547 wd:Q115694320 wd:Q115694242 wd:Q115694145 wd:Q115694310 wd:Q115694288 wd:Q115694380 wd:Q115694277 wd:Q24773028}
+    ?item wdt:P921 ?prot.
+    BIND(
+      IF(?prot = wd:Q24784703, 'G',
+      IF(?prot = wd:Q115694203, 'F',
+      IF(?prot = wd:Q24769547, 'SH',
+      IF(?prot = wd:Q115694320, 'N',
+      IF(?prot = wd:Q115694242, 'P',
+      IF(?prot = wd:Q115694145, 'L',
+      IF(?prot = wd:Q115694310, 'M',
+      IF(?prot = wd:Q115694288, 'M2-1',
+      IF(?prot = wd:Q115694380, 'M2-2',
+      IF(?prot = wd:Q115694277, 'NS1',
+      IF(?prot = wd:Q24773028, 'NS2',
+        'unknown')))))))))))
+      as ?protLabel)
+  }
+  OPTIONAL { 
+    ?item wdt:P698 ?pmid.
+  }
+  OPTIONAL { 
+    ?item wdt:P932 ?pmcid.
+  }
+  OPTIONAL { 
+    ?item wdt:P356 ?doi.
+  }
+  OPTIONAL { 
+    ?item ?rev wd:Q7318358.
+  }
+  OPTIONAL { 
+    ?item wdt:P31 wd:Q580922.
+    ?item wdt:P156 ?fitem.
+    ?fitem wdt:P356 ?foll.
+  }
+}
+GROUP BY ?item ?title ?pmid ?pmcid ?doi ?protLabel ?rev ?top
